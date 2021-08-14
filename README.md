@@ -4,6 +4,8 @@
 - 最新apk在 mobileanjian/rox/激情ROX-辅助-20210815.apk
 
 # 模拟器设置
+- CPU 2 或以上
+- RAM 3072MB 或以上
 - 屏幕分辨率
   - 宽: 1280 
   - 高: 720 
