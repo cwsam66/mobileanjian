@@ -13,7 +13,7 @@
 # 游戏画面设置
 - 语言
   - 简体中文
-- 如果辅助器不能正常运行，建议把游戏游戏画面设置换成以下设置
+- 如果辅助器不能正常运行，建议把游戏画面设置换成以下设置
 ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/ROSetting_1.png?raw=true)
 ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/ROSetting_2.png?raw=true)
 
