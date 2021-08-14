@@ -26,6 +26,7 @@
 - 进入游戏
   - 次序不重要
 - 点击辅助器浮动图标
+  - 需注意如果浮动图标在小地图范围的话，需把它移开
 
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_2.png?raw=true)
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_3.png?raw=true)
