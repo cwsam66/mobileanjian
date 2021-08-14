@@ -20,12 +20,16 @@
 # 简单教程
 - 安装辅助器
 - 打开辅助器后直接启动辅助
+
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_1.png?raw=true)
+  
 - 进入游戏
   - 次序不重要
 - 点击辅助器浮动图标
+
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_2.png?raw=true)
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_3.png?raw=true)
+  
 - 打开设置，以下功能只能选一个执行
   - 看板任务
   - 商会任务 
@@ -36,6 +40,10 @@
   - 园艺
     - 需要先进入采集界面
     - 自动验证码部分还未解决
+
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_4.png?raw=true)
+  
 - 做好选项后保存设置再点击启动便可
+
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_5.png?raw=true)
+  
