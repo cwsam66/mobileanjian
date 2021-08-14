@@ -4,9 +4,9 @@
 
 # 模拟器设置
 - 屏幕分辨率
-  - 宽:1280 
+  - 宽: 1280 
   - 高：720 
-  - DPI:240
+  - DPI: 240
   
 ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/EmulatorSetting_1.png?raw=true)
 
