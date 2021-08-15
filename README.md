@@ -29,6 +29,7 @@
 - 进入游戏
   - 次序不重要
 - 点击辅助器浮动图标
+  - 注意如果浮动图标有遮挡到小地图的+图标，需要把浮动图标移去最高处
 
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_2.png?raw=true)
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_3.png?raw=true)
