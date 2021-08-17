@@ -72,9 +72,11 @@ Sub Fishing
 	
     If (IsNull(fishTime) or fishTime = "") Then
         fishTime = 0
+    Else 
+    	fishTime = CInt(fishTime)
     End If
 	
-    messageArray(1) = count
+    messageArray(1) = fishTime
     messageArray(2) = "次"
 	
     Call Alert("Fishing", Join(messageArray, ""))
@@ -523,6 +525,12 @@ Sub DoGuildMission()
    			Call GoProntera()
    			Goto CheckAction
    		End If
+   	Else 
+   		Call Alert("DoGuildMission", "侦察不到目前在进行着什么动作")
+   		Call DelayMin()
+   		Call Alert("DoGuildMission", "等一会儿")
+   		Call DelayLong()
+   		Goto CheckAction
    	End If
 End Sub
 
@@ -696,6 +704,7 @@ Sub DoMission(count)
     Dim actionButtonCatch = "buttoncatch"
     Dim actionButtonPick = "buttonpick"
     Dim actionButtonAppease = "buttonappease"
+    Dim actionButtonFind = "buttonfind"
     Dim actionMissionBoard = "missionboard"
     Dim actionPathFinding = "pathfinding"
     Dim actionLoading = "loading"
@@ -774,6 +783,11 @@ Sub DoMission(count)
             Touch 856, 296, 100
             Delay 4000
             Call DoMission(0)
+        Case actionButtonFind
+        	Call Alert("DoMission", "动作按钮寻找")
+            Touch 856, 296, 100
+            Delay 4000
+            Call DoMission(0)
         Case actionHunting
             Call Alert("DoMission", "狩猎动作")
             Touch touchMissionX, touchMissionY, 100
@@ -830,13 +844,13 @@ Sub GoProntera()
 	Call Alert("GoProntera", "回去普隆德拉")
 	// go back prontera
 	Touch 1259, 199, 100 //open mini map
-	Call DelayMid()
+	Call DelayLong()
 	Touch 1196, 575, 100 // open world map
-	Call DelayMid()
+	Call DelayLong()
 	Touch 796, 378, 100 // click on prontera
-	Call DelayMid()
+	Call DelayLong()
 	Touch 999, 402, 100 // click on middle kafra
-	Call DelayMid()
+	Call DelayLong()
 End Sub
 
 Function CheckMissionAction
@@ -874,6 +888,9 @@ Function CheckMissionAction
     ElseIf IsButtonPick() = True Then
         TracePrint("checkMissionAction: buttonpick")
         CheckMissionAction = "buttonpick"
+    ElseIf IsButtonFind() = True Then
+        TracePrint("checkMissionAction: buttonfind")
+        CheckMissionAction = "buttonfind"
     ElseIf IsSubmitItem() = True Then
         TracePrint("checkMissionAction: submititem")
         CheckMissionAction = "submititem"
@@ -1000,6 +1017,15 @@ Function IsButtonPick
     Else 
         IsButtonPick = False
     End If
+End Function
+
+Function IsButtonFind
+    If CmpColorEx("855|296|FFFFFF,859|312|FFFFFF,878|296|FFFFFF,871|312|FFFFFF",1) = 1 Then
+		Call Alert("IsButtonPick", "采花按钮")
+        IsButtonFind = True
+	Else
+		IsButtonFind = False
+	End If
 End Function
 
 Function IsButtonCatch
