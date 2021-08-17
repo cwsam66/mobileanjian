@@ -16,7 +16,7 @@
 # 辅助器
 - 只适用于安卓模拟器，千万别安装在手机
 - 建议使用逍遥模拟器（Memu Play）
-- 最新apk位于 mobileanjian/rox/激情ROX-辅助-20210816.apk
+- 最新apk位于 mobileanjian/rox/激情ROX-辅助-20210817.apk
 
 # 模拟器设置
 - CPU 2 或以上
