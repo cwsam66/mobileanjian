@@ -1,4 +1,7 @@
 # 更新日记
+2021-08-21
+- 解决商会任务侦测不到寻路动作导致的循环
+- 优化工会任务后回城
 2021-08-17
 - 修复钓鱼只钓一次就结束的问题
 - 优化任务完毕后自动回普隆德拉
@@ -16,7 +19,7 @@
 # 辅助器
 - 只适用于安卓模拟器，千万别安装在手机
 - 建议使用逍遥模拟器（Memu Play）
-- 最新apk位于 mobileanjian/rox/激情ROX-辅助-20210817.apk
+- 最新apk位于 mobileanjian/rox/激情ROX-辅助-20210821.apk
 
 # 模拟器设置
 - CPU 2 或以上
@@ -44,7 +47,7 @@
 - 进入游戏
   - 次序不重要
 - 点击辅助器浮动图标
-  - 注意如果浮动图标有遮挡到小地图的+图标，需要把浮动图标移去最高处
+  - ~~注意如果浮动图标有遮挡到小地图的+图标，需要把浮动图标移去最高处~~
 
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_2.png?raw=true)
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_3.png?raw=true)
