@@ -6,7 +6,7 @@ Import "zm.luae"
 zm.Init 
 
 //ShowMessage ("测试显示信息",10000, 370, 20)
-call Alert("Init", "初始：信息检测")
+Call Alert("Init", "初始：信息检测")
 
 /*
 Call Alert("看板选框",  CStr(ReadUIConfig("看板选框")))
@@ -39,7 +39,7 @@ Call DelayMin()
 //Call GuildMission()
 //Call FishingMission()
 
-Delay 3000
+Delay 1000
 
 If ReadUIConfig("钓鱼选框") = True Then 
 	Call Alert("钓鱼选框", "钓鱼大师")
@@ -312,18 +312,19 @@ Function TakeCommercialMission
     Dim b3 = GetPixelColor(1057,600) // card mission button, id = 3
     Dim x = 0
     Dim y = 600
-	Dim missionTypeId = 3
+	Dim missionTypeId = CInt(ReadUIConfig("商会任务种类"))
 	
-	If (missionTypeId = 1) Then 
+	If (missionTypeId = 0) Then 
 		Call Alert("CommercialMission", "接受头饰任务") 
 		x = 270
-	ElseIf (missionTypeId = 2) Then
+	ElseIf (missionTypeId = 1) Then
 		Call Alert("CommercialMission", "接受装备任务") 
 		x = 648
-	ElseIf (missionTypeId = 3) Then
+	ElseIf (missionTypeId = 2) Then
 		Call Alert("CommercialMission", "接受卡片任务") 
 		x = 1026
 	End If
+	Call DelayMin()
 	
 	If (GetPixelColor(x, y) = "E39A7F") Then 
 		Touch x, y, 100
@@ -828,15 +829,28 @@ Sub SubmitMission
 End Sub
 
 Sub CheckMission(chkX, chkY, color, tchX, tchY)
-    Dim pixel = GetPixelColor(chkX, chkY)
+    //Dim pixel = GetPixelColor(chkX, chkY)
     Dim delayMs = 1500
 	
-    If (pixel = color) Then 
-        Touch tchX, tchY, 100
+	Dim cmpArray(3)
+    cmpArray(0) = chkX
+    cmpArray(1) = chkY
+    cmpArray(2) = color
+    Dim cmpColor = Join(cmpArray, "|")
+	
+	If CmpColorEx(cmpColor,0.9) = 1 Then
+		Touch tchX, tchY, 100
         Delay delayMs
         Touch 655, 570, 100  //accept or submit button
         Delay delayMs
-    End If
+	End If
+	
+    //If (pixel = color) Then 
+    //    Touch tchX, tchY, 100
+    //    Delay delayMs
+    //    Touch 655, 570, 100  //accept or submit button
+    //    Delay delayMs
+    //End If
 	
 End Sub
 
@@ -862,6 +876,7 @@ Sub DoMission(count)
     Dim action = ""
     Dim missionAvail_1 = GetPixelColor(69, 212)
     Dim missionAvail_2 = GetPixelColor(69, 293)
+    Dim missionAvail_3 = GetPixelColor(69, 311)
     Dim touchMissionX = 0
     Dim touchMissionY = 0
 	
@@ -873,6 +888,9 @@ Sub DoMission(count)
     ElseIf (Left(CStr(missionAvail_2), 1) = "F") Then 
         touchMissionX = 260
         touchMissionY = 290
+    ElseIf (Left(CStr(missionAvail_3), 1) = "F") Then 
+        touchMissionX = 260
+        touchMissionY = 305
     End If
 	
     Call Alert("DoMissionCount", count)
@@ -1127,53 +1145,75 @@ End Function
 Function IsButtonCheck
     //buttoncheck
     // 4 pixel in the word of 查看 button
-    Dim bc1 = GetPixelColor(856, 296) // top of 查
-    Dim bc2 = GetPixelColor(876, 297) // bottom of 查
-    Dim bc3 = GetPixelColor(877, 297) // top of 看
-    Dim bc4 = GetPixelColor(883, 310) // bottom of 看
+    //Dim bc1 = GetPixelColor(856, 296) // top of 查
+    //Dim bc2 = GetPixelColor(876, 297) // bottom of 查
+    //Dim bc3 = GetPixelColor(877, 297) // top of 看
+    //Dim bc4 = GetPixelColor(883, 310) // bottom of 看
 	
-    If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
-    	Call Alert("IsButtonCheck", "查看按钮")
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonCheck", "查看按钮")
+    //    IsButtonCheck = True
+    //Else 
+    //    IsButtonCheck = False
+    //End If
+    
+    If CmpColorEx("856|296|FFFFFF,876|297|FFFFFF,877|297|FFFFFF,883|310|FEFEFE",0.95) = 1 Then
+		Call Alert("IsButtonCheck", "查看按钮")
         IsButtonCheck = True
-    Else 
-        IsButtonCheck = False
-    End If
+	Else
+		IsButtonCheck = False
+	End If
+    
 End Function
 
 Function IsButtonCollect
     //buttoncheck
     // 4 pixel in the word of 采集 button
-    Dim bc1 = GetPixelColor(856, 297) // top of 采
-    Dim bc2 = GetPixelColor(856, 312) // bottom of 采
-    Dim bc3 = GetPixelColor(877, 297) // top of 集
-    Dim bc4 = GetPixelColor(877, 312) // bottom of 集
+    //Dim bc1 = GetPixelColor(856, 297) // top of 采
+    //Dim bc2 = GetPixelColor(856, 312) // bottom of 采
+    //Dim bc3 = GetPixelColor(877, 297) // top of 集
+    //Dim bc4 = GetPixelColor(877, 312) // bottom of 集
 	
-    If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
-    	Call Alert("IsButtonCollect", "采集按钮")
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonCollect", "采集按钮")
+    //    IsButtonCollect = True
+    //Else 
+    //    IsButtonCollect = False
+    //End If
+    
+    If CmpColorEx("856|297|FFFFFF,856|312|FFFFFF,877|297|FFFFFF,877|312|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonCollect", "采集按钮")
         IsButtonCollect = True
-    Else 
-        IsButtonCollect = False
-    End If
+	Else
+		IsButtonCollect = False
+	End If
 End Function
 
 Function IsButtonPick
     //buttoncheck
     // 4 pixel in the word of 采花 button
-    Dim bc1 = GetPixelColor(856, 297) // top of 采
-    Dim bc2 = GetPixelColor(856, 312) // bottom of 采
-    Dim bc3 = GetPixelColor(880, 297) // top of 花
-    Dim bc4 = GetPixelColor(878, 312) // bottom of 花
+    //Dim bc1 = GetPixelColor(856, 297) // top of 采
+    //Dim bc2 = GetPixelColor(856, 312) // bottom of 采
+    //Dim bc3 = GetPixelColor(880, 297) // top of 花
+    ///Dim bc4 = GetPixelColor(878, 312) // bottom of 花
 	
-    If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
-    	Call Alert("IsButtonPick", "采花按钮")
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonPick", "采花按钮")
+    //    IsButtonPick = True
+    //Else 
+    //    IsButtonPick = False
+    //End If
+    
+    If CmpColorEx("856|297|FFFFFF,856|312|FFFFFF,880|297|FFFFFF,878|312|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonPick", "采花按钮")
         IsButtonPick = True
-    Else 
-        IsButtonPick = False
-    End If
+	Else
+		IsButtonPick = False
+	End If
 End Function
 
 Function IsButtonFind
-    If CmpColorEx("855|296|FFFFFF,859|312|FFFFFF,878|296|FFFFFF,871|312|FFFFFF",1) = 1 Then
+    If CmpColorEx("855|296|FFFFFF,859|312|FFFFFF,878|296|FFFFFF,871|312|FFFFFF", 0.95) = 1 Then
 		Call Alert("IsButtonPick", "寻找按钮")
         IsButtonFind = True
 	Else
@@ -1184,37 +1224,51 @@ End Function
 Function IsButtonCatch
     //buttoncheck
     // 4 pixel in the word of 捕抓 button
-    Dim bc1 = GetPixelColor(859, 297) // top of 捕
-    Dim bc2 = GetPixelColor(859, 312) // bottom of 捕
-    Dim bc3 = GetPixelColor(880, 297) // top of 抓 
-    Dim bc4 = GetPixelColor(880, 311) // bottom of 抓 
+    //Dim bc1 = GetPixelColor(859, 297) // top of 捕
+    //Dim bc2 = GetPixelColor(859, 312) // bottom of 捕
+    //Dim bc3 = GetPixelColor(880, 297) // top of 抓 
+    //Dim bc4 = GetPixelColor(880, 311) // bottom of 抓 
 	
-    If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
-    	Call Alert("IsButtonCheck", "捕抓按钮")
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonCheck", "捕抓按钮")
+    //    IsButtonCatch = True
+    //Else 
+    //    IsButtonCatch = False
+    //End If
+    
+    If CmpColorEx("859|297|FFFFFF,859|312|FFFFFF,880|297|FFFFFF,880|311|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonCheck", "捕抓按钮")
         IsButtonCatch = True
-    Else 
-        IsButtonCatch = False
-    End If
+	Else
+		IsButtonCatch = False
+	End If
 End Function
 
 Function IsButtonAppease
     //buttoncheck
     // 4 pixel in the word of 安抚 button
-    Dim bc1 = GetPixelColor(856, 297) // top of 安
-    Dim bc2 = GetPixelColor(860, 310) // bottom of 安
-    Dim bc3 = GetPixelColor(879, 297) // top of 抚 
-    Dim bc4 = GetPixelColor(885, 309) // bottom of 抚 
+    //Dim bc1 = GetPixelColor(856, 297) // top of 安
+    //Dim bc2 = GetPixelColor(860, 310) // bottom of 安
+    //Dim bc3 = GetPixelColor(879, 297) // top of 抚 
+    //Dim bc4 = GetPixelColor(885, 309) // bottom of 抚 
 	
-    If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
-    	Call Alert("IsButtonAppease", "安抚按钮")
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonAppease", "安抚按钮")
+    //    IsButtonAppease = True
+    //Else 
+    //    IsButtonAppease = False
+    //End If
+    
+    If CmpColorEx("856|297|FFFFFF,860|310|FFFFFF,879|297|FFFFFF,885|309|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonAppease", "安抚按钮")
         IsButtonAppease = True
-    Else 
-        IsButtonAppease = False
-    End If
+	Else
+		IsButtonAppease = False
+	End If
 End Function
 
 Function IsButtonFishing
-    If CmpColorEx("782|317|FFFFFF,782|325|FFFFFF,809|316|FFFFFF,808|328|FFFFFF",1) = 1 Then
+    If CmpColorEx("782|317|FFFFFF,782|325|FFFFFF,809|316|FFFFFF,808|328|FFFFFF", 0.95) = 1 Then
 		Call Alert("IsButtonAppease", "钓鱼按钮")
         IsButtonFishing = True
 	Else
@@ -1223,7 +1277,7 @@ Function IsButtonFishing
 End Function
 
 Function IsButtonCai
-    If CmpColorEx("856|297|FFFFFF,856|312|FFFFFF",1) = 1 Then
+    If CmpColorEx("856|297|FFFFFF,856|312|FFFFFF",0.95) = 1 Then
 		Call Alert("IsButtonCai", "采X按钮")
         IsButtonCai = True
 	Else
@@ -1319,16 +1373,23 @@ End Function
 
 Function IsLoading
     // loading bar pixel
-    Dim p1 =  GetPixelColor(33, 663) //loading bar left
-    Dim p2 =  GetPixelColor(29, 670) //loading bar left
-    Dim p3 =  GetPixelColor(39, 668) //loading bar left
+    //Dim p1 =  GetPixelColor(33, 663) //loading bar left
+    //Dim p2 =  GetPixelColor(29, 670) //loading bar left
+    //Dim p3 =  GetPixelColor(39, 668) //loading bar left
 	
-    If (p1 = "F7E3C6" And p2 = "DE8C1C" And p3 = "E08C16") Then 
-    	Call Alert("IsLoading", "加载中")
+    //If (p1 = "F7E3C6" And p2 = "DE8C1C" And p3 = "E08C16") Then 
+    //	Call Alert("IsLoading", "加载中")
+    //    IsLoading = True
+    //Else 
+    //    IsLoading = False
+    //End If
+    
+    If CmpColorEx("33|663|F7E3C6,29|670|DE8C1C,39|668|E08C16", 0.9) = 1 Then
+		Call Alert("IsLoading", "加载中")
         IsLoading = True
-    Else 
-        IsLoading = False
-    End If
+	Else
+		IsLoading = False
+	End If
 End Function
 
 Function IsDead
@@ -1345,7 +1406,7 @@ Function IsDead
     //Else 
     //    IsDead = False
     //End If
-    If CmpColorEx("1060|648|FFFFFF,1083|635|FFFFFF,1083|649|FFFFFF",1) = 1 Then
+    If CmpColorEx("1060|648|FFFFFF,1083|635|FFFFFF,1083|649|FFFFFF",0.9) = 1 Then
 		Call Alert("IsDead", "死亡")
         IsDead = True
 	Else
@@ -1375,8 +1436,8 @@ Function IsCommercialDialog
     //    TracePrint("IsCommercialDialog False")
     //    IsCommercialDialog = false
     //End If
-    
-    If CmpColorEx("989|421|FFFFFF,989|489|FFFFFF,1215|437|FCCBA5,1217|510|FAC9A0,222|556|FFFFFF,290|555|FFFFFF", 1) = 1 Then 
+    //,290|555|FFFFFF
+    If CmpColorEx("989|421|FFFFFF,989|489|FFFFFF,1215|437|FCCBA5,1217|510|FAC9A0,222|556|FFFFFF", 0.9) = 1 Then 
     	TracePrint("IsCommercialDialog True")
 		IsCommercialDialog = True
 	Else
@@ -1413,7 +1474,7 @@ Function IsCommercialBuyScreen
 End Function
 
 Function IsTradeCentre
-	If CmpColorEx("75|130|EFB57D,1240|110|716E79,1260|700|BDB0B2,20|700|BBB7B6", 1) = 1 Then 
+	If CmpColorEx("75|130|EFB57D,1240|110|716E79,1260|700|BDB0B2,20|700|BBB7B6", 0.9) = 1 Then 
 		Call Alert("IsTradeCentre", "交易行画面")
 		IsTradeCentre = True
 	Else
@@ -1422,7 +1483,7 @@ Function IsTradeCentre
 End Function
 
 Function IsGuildMissionLocked
-	If CmpColorEx("160|160|4D5E65,340|180|656A6D,330|390|5E656B",1) = 1 Then
+	If CmpColorEx("160|160|4D5E65,340|180|656A6D,330|390|5E656B",0.9) = 1 Then
 		Call Alert("IsCommercialBuyScreen", "商会购买页面")
         IsGuildMissionLocked = True
 	Else
@@ -1431,7 +1492,7 @@ Function IsGuildMissionLocked
 End Function
 
 Function IsGuildMissionDo
-	If CmpColorEx("160|160|ADD2E3,340|180|E3ECF4,330|390|D2E1EF",1) = 1 Then
+	If CmpColorEx("160|160|ADD2E3,340|180|E3ECF4,330|390|D2E1EF",0.9) = 1 Then
 		Call Alert("IsGuildMissionDo", "检测到工会任务")
         IsGuildMissionDo = True
 	Else
