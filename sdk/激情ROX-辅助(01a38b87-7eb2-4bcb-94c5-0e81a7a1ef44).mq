@@ -312,6 +312,8 @@ Function TakeCommercialMission
     Dim b3 = GetPixelColor(1057,600) // card mission button, id = 3
     Dim x = 0
     Dim y = 600
+    Dim colorArray(3)
+    
 	Dim missionTypeId = CInt(ReadUIConfig("商会任务种类"))
 	
 	If (missionTypeId = 0) Then 
@@ -326,12 +328,20 @@ Function TakeCommercialMission
 	End If
 	Call DelayMin()
 	
-	If (GetPixelColor(x, y) = "E39A7F") Then 
+	colorArray(0) = x
+	colorArray(1) = y
+	colorArray(2) = "E39980"
+	Dim cmpColor = Join(colorArray, "|")
+	
+	//If (GetPixelColor(x, y) = "E39A7F") Then 
+	If CmpColorEx(cmpColor,0.95) = 1 Then
 		Touch x, y, 100
 		Call DelayMin()
 	End If
 	
-	If (GetPixelColor(x, y) = "629CE6") Then
+	//If (GetPixelColor(x, y) = "629CE6") Then
+	colorArray(2) = "5F99E3"
+	If CmpColorEx(cmpColor,0.95) = 1 Then
 		Call Alert("CommercialMission", "接受任务成功")
 		Touch 1247,43, 100
 		TakeCommercialMission = True
@@ -471,7 +481,7 @@ End Sub
 
 Sub GoGuildMission()
 	Call Alert("GoGuildMission", "打开公会页面")
-	Touch 1200, 500, 100
+	Touch 950, 400, 100
 	Call DelayMid()
 	
 	Call Alert("GoGuildMission", "打开公会活动页面")
@@ -544,14 +554,21 @@ Sub DoGuildMission()
     	Touch 445, 600, 100 // click buy
     	Call DelayMid()
     	Call Alert("DoGuildMission", "购买中")
-    	Do While GetPixelColor(609,84) <> "8978F2"
+    	Do While GetPixelColor(614,89) <> "FFFFFF"
         	Call DelayMid()
     	Loop
     	Call Alert("DoGuildMission", "交易记录")
     	Touch 520, 100, 100 // click trade history
     	Call DelayMin()
+    	Call Alert("DoGuildMission", "选择")
+    	Touch 1140, 250, 100 // select purchased item
+    	Call DelayMin()
     	Call Alert("DoGuildMission", "领取")
-    	Touch 1140, 250, 100 // touch collect
+    	Touch 1200, 170, 100 // touch collect
+    	Call DelayMin()
+    	Touch 1200, 170, 100 // touch collect
+    	Call DelayMin()
+    	Touch 1200, 170, 100 // touch collect
     	Call DelayMin()
     	Touch 1175,47, 100 // exit from shop
     	Call DelayMin()
@@ -700,7 +717,8 @@ Function CheckIsMissionBoard
 	TracePrint(boardPointD)
 	
 	// And sc7 <> "EEEEEE" And sc8 <> "837E83" And sc9 <> "E78F5D"
-    If (boardPointA = "938185" And boardPointB = "7B737B" And boardPointC = "797279" And boardPointD = "6F9FBE") Then
+	// a 938185
+    If (boardPointA = "6789BC" And boardPointB = "7B737B" And boardPointC = "797279" And boardPointD = "6F9FBE") Then
         Call Alert("CheckIsMissionBoard:", "已进入看板任务页面")
         TracePrint("checkIsMissioBoard True")
         CheckIsMissionBoard = true
@@ -718,8 +736,8 @@ Sub HideAllMission
     Call DelayMin()
 	
     Dim continue = true
-    Dim chkX = 315
-    Dim chkY = 220
+    Dim chkX = 300
+    Dim chkY = 200
 
     Do While continue = True
         continue = CheckToHideMission(chkX, chkY)
@@ -737,23 +755,40 @@ Function CheckToHideMission (chkX, chkY)
     Delay 1000
     Dim color = GetPixelColor(chkX, chkY)
     Dim checkBoxColor = GetPixelColor(280, 600)
-	
+    Dim colorArray(3)
+    colorArray(0) = CStr(chkX)
+    colorArray(1) = CStr(chkY)
+    colorArray(2) = "9EDFFF"
+    Dim cmpColor = Join(colorArray, "|")
+   
     // if already accepted many mission (one situation is accepted all board mission), 
     // the first mission point 315, 220, color will not start with 9 (F1F1F1)
     // at this case, it will stop from hidding mission
-    If (Left(CStr(color), 1) = "9") Then
-        If (checkBoxColor <> "64D9B5") Then
+    // If (Left(CStr(color), 1) = "9") Then
+    If CmpColorEx(cmpColor, 0.95) = 1 Then 
+    	TracePrint("aaaa")
+        //If (checkBoxColor <> "64D9B5") Then
+        If CmpColorEx("280|600|66DDB8", 0.95) <> 1 Then 
+        	TracePrint("bbbb")
             Touch 280, 600, 100
             Delay 1000
-        End If
-		
-        // check if first mission already hidden then skip
-        If (chkY = "220" and checkBoxColor = "66DDAA") Then 
-            checkToHideMission = False
-        Else 
             checkToHideMission = True
-        End If
+        ElseIf (CStr(chkY) = "200") Then
+        	TracePrint("cccc")
+			checkToHideMission = False
+		Else 
+			TracePrint("dddd")
+			TracePrint(chkY)
+			checkToHideMission = True
+		End If
+        
+        //If (chkY = "220" and checkBoxColor = "66DDAA") Then 
+        //    checkToHideMission = False
+        //Else 
+        //    checkToHideMission = True
+        //End If
     Else 
+    	TracePrint("eeee")
         checkToHideMission = False
     End If
 End Function
@@ -1011,7 +1046,7 @@ End Sub
 Sub GoProntera()
 	Call Alert("GoProntera", "回去普隆德拉")
 	// go back prontera
-	Touch 1259, 199, 100 //open mini map
+	Touch 1130, 118, 100 //open mini map
 	Call DelayLong()
 	Touch 1196, 575, 100 // open world map
 	Call DelayLong()
@@ -1345,12 +1380,19 @@ Function IsSubmitItem
     // p2 = "BAD9CE" And 
    	// p5 = CB8365 is CommercialMission "交付"
    	// p5 = E09E7C is BoardMission
-    If (p1 = "B6D6D4" And p3 = "BAD9CE" And p4 = "B6D6D4" And (p5 = "E19E7B" or p5 = "CC8365")) Then 
+    //If (p1 = "B6D6D4" And p3 = "BAD9CE" And p4 = "B6D6D4" And (p5 = "E19E7B" or p5 = "CC8365")) Then 
+    //	Call Alert("IsSubmitItem", "需要提交物品")
+    //    IsSubmitItem = True
+    //Else 
+    //    IsSubmitItem = False
+    //End If
+    
+    If (CmpColorEx("937|186|B4D6D5,1194|137|B9DBCA,1190|186|B4D6D5,1022|615|E09E7C", 0.95) = 1) or (CmpColorEx("937|186|B4D6D5,1194|137|B9DBCA,1190|186|B4D6D5,1022|615|CB8365", 0.95) = 1) Then
     	Call Alert("IsSubmitItem", "需要提交物品")
         IsSubmitItem = True
-    Else 
-        IsSubmitItem = False
-    End If
+	Else
+		IsSubmitItem = False
+	End If
 End Function
 
 Function IsSubmitItemCheck
@@ -1363,7 +1405,8 @@ Function IsSubmitItemCheck
     Dim p5 = GetPixelColor(1022, 615) // check item location button
 	
     // p2 = "BAD9CE" And 
-    If (p1 = "B6D6D4" And p3 = "BAD9CE" And p4 = "B6D6D4" And p5 = "5795D4") Then 
+    // If (p1 = "B6D6D4" And p3 = "BAD9CE" And p4 = "B6D6D4" And p5 = "5795D4") Then 
+    If CmpColorEx("937|186|B4D6D5,1194|137|B9DBCA,1190|186|B4D6D5,1022|615|5796D4",0.95) = 1 Then
     	Call Alert("IsSubmitItemCheck", "提交物品页面，查看来源")
         IsSubmitItemCheck = True
     Else 
@@ -1456,7 +1499,8 @@ Function IsBuyScreen
     Dim p5 =  GetPixelColor(530,530) //random place, bottom of total price
 	
 	// p3 = "6FD3FB" And p4 = "7AAEE7"
-    If (p1 = "5DA1DF" And p2 = "E7AD6F" And p3 = "AFABA7" And p4 = "BB9999" And p5 = "E4DBD4") Then 
+    // If (p1 = "5DA1DF" And p2 = "E7AD6F" And p3 = "AFABA7" And p4 = "BB9999" And p5 = "E4DBD4") Then 
+    If CmpColorEx("436|606|5FA2DF,597|615|E7AD70,469|458|AFAAA7,633|458|BB9999,530|530|E4DBD4",0.95) = 1 Then
     	Call Alert("IsBuyScreen", "购买页面")
         IsBuyScreen = True
     Else 
