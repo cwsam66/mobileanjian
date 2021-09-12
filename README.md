@@ -85,7 +85,7 @@
   ![alt text](https://github.com/cwsam66/mobileanjian/blob/main/rox/screen/App_3.png?raw=true)
   
 - 打开设置，以下功能只能选一个执行
-  - 看板任务
+  - 看板任务（赏金任务/萌王任务）
     - 任务完毕后自动回普隆德拉
   - 商会任务 
     - 任务完毕后自动回普隆德拉
