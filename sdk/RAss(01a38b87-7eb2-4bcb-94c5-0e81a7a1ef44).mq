@@ -1,0 +1,3318 @@
+SetRowsNumber (0)
+TracePrint SetDictEx(0, "Attachment:mq_soft.txt")
+TracePrint UseDict(0)
+
+Import "zm.luae"
+zm.Init
+
+//ShowMessage ("测试显示信息",10000, 370, 20)
+Call Alert("Init", "初始：信息检测")
+
+/*
+Call Alert("看板选框",  CStr(ReadUIConfig("看板选框")))
+Call DelayMin()
+Call Alert("看板先隐藏任务", CStr(ReadUIConfig("看板先隐藏任务")))
+Call DelayMin()
+Call Alert("看板自动接任务", CStr(ReadUIConfig("看板自动接任务")))
+Call DelayMin()
+Call Alert("商会选框", CStr(ReadUIConfig("商会选框")))
+Call DelayMin()
+Call Alert("商会先隐藏任务", CStr(ReadUIConfig("商会先隐藏任务")))
+Call DelayMin()
+Call Alert("商会自动接任务", CStr(ReadUIConfig("商会自动接任务")))
+Call DelayMin()
+Call Alert("商会任务种类", ReadUIConfig("商会任务种类"))
+Call DelayMin()
+Call Alert("钓鱼选框", CStr(ReadUIConfig("钓鱼选框")))
+Call DelayMin()
+Call Alert("钓鱼次数", ReadUIConfig("钓鱼次数"))
+Call DelayMin()
+Call Alert("园丁选框", CStr(ReadUIConfig("园丁选框")))
+Call DelayMin()
+*/
+
+//Call BoardMission()
+//Call Fishing()
+//Call Gardening()
+//Call OcrTest()
+//Call CommercialMission()
+//Call GuildMission()
+//Call FishingMission()
+
+Delay 3000
+
+Call CheckLanguage()
+Call Check2DView()
+
+Dim IsMission = False
+Dim IsLife = False
+Dim IsInstance = False
+
+//任务大师
+//If ReadUIConfig("全套选框") = True Then 
+//	Call Alert("全套选框", "全套任务")
+//	Call DelayMin()
+//  Call AllMission()
+If ReadUIConfig("看板选框") = True or ReadUIConfig("萌王选框") = True or ReadUIConfig("商会选框") = True or ReadUIConfig("公会选框") = True Then 
+	Call Alert("任务选项", "任务选项")
+	Call DelayMin()
+	Call AllMission()
+//生活大师
+ElseIf ReadUIConfig("钓鱼选框") = True Then
+	Call Alert("钓鱼选框", "钓鱼大师")
+	Call DelayMin()
+    Call Fishing()
+ElseIf ReadUIConfig("园丁选框") = True Then
+	Call Alert("园丁选框", "园丁师傅")
+	Call DelayMin()
+    Call Gardening()
+//ElseIf ReadUIConfig("看板选框") = True Then
+
+//	If ReadUIConfig("钓鱼任务") = True Then
+//		Call Alert("钓鱼任务", "先做钓鱼任务")
+//		Call DelayMin()
+//		Call FishingMission()
+//	End If
+	
+//	Call Alert("看板选框", "看板任务")
+//	Call DelayMin()
+//    Call BoardMission()
+//ElseIf ReadUIConfig("萌王选框") = True Then
+//	Call Alert("萌王选框", "萌王任务")
+//	Call DelayMin()
+//    Call Board2Mission()
+//ElseIf ReadUIConfig("商会选框") = True Then
+//	Call Alert("商会选框", "商会任务")
+//	Call DelayMin()
+//    Call CommercialMission()
+//ElseIf ReadUIConfig("公会选框") = True Then
+//	Call Alert("公会选框", "公会任务")
+//	Call DelayMin()
+//  Call GuildMission()
+//其他
+//副本大师
+ElseIf ReadUIConfig("副本选框") = True Then
+	Call Alert("副本选框", "副本师傅")
+	Call DelayMin()
+    Call Instancing()
+//游戏大师
+ElseIf ReadUIConfig("酒馆选框") = True Then
+	Call Alert("酒馆选框", "游戏师傅")
+	Call DelayMin()
+    Call Tarvern()
+ElseIf ReadUIConfig("断线重登选框") = True Then
+	Call Alert("断线重登选框", "断线重登")
+	Call DelayMin()
+    Call DisconnectCheck()
+End if
+
+Sub Fishing
+    Dim fishTime = ReadUIConfig("钓鱼次数")
+    Dim count = 0
+    Dim prevColor = ""
+    Dim startedFishing = False
+    Dim messageArray(3)
+    messageArray(0) = "钓鱼次数设为"
+	
+    If (IsNull(fishTime) or fishTime = "") Then
+        fishTime = 0
+    Else 
+    	fishTime = CInt(fishTime)
+    End If
+	
+    messageArray(1) = fishTime
+    messageArray(2) = "次"
+	
+    Call Alert("Fishing", Join(messageArray, ""))
+    Call DelayMid()
+	
+    Rem a
+    messageArray(0) = "开始钓鱼，第"
+    messageArray(1) = count + 1
+    Call Alert("Fishing", Join(messageArray, ""))
+		
+    Dim rColorStart, rColorCatchCircle, rColorCatchGreen, p1, p2
+    //	rColorStart = GetPixelColor(1127, 544)//GetPixelColor(174, 1126)
+    //rColorCatchCircle = GetPixelColor(108, 1082)
+    //		rColorCatchGreen = GetPixelColor(1058, 489)//GetPixelColor(229,1059)
+    TracePrint(rColorCatchGreen)
+    //rColorCatchGreen = Left(CStr(rColorCatchGreen), 1)
+    //TracePrint("Start: " + rColorStart)
+    //TracePrint("Circle: " + rColorCatchCircle)
+    //TracePrint("Start: " + rColorCatchGreen)
+    //If (rColorCatchGreen = "9" or rColorStart = "F7E4E7") Then
+    //	Touch 1083, 524, 100//156, 1135, 100
+    //	TracePrint("click")
+			
+    //	If (prevColor <> "F7E4E7") Then 
+    //		count = count + 1
+    //		prevColor = "F7E4E7"
+    //		TracePrint("Fishing Count")
+    //		TracePrint(count)
+    //	End If
+    //End If
+		
+    //Call Alert("Fishing", "放杆")
+    Do While startedFishing = False
+        //rColorStart = GetPixelColor(1127, 544)
+        //If (rColorStart = "F7E4E7") Then 
+        If CmpColorEx("1127|544|F7E3E7",0.95) = 1 Then
+            Touch 1083, 524, 100//156, 1135, 100
+            Touch 1083, 524, 100
+            Touch 1083, 524, 100
+            Call Alert("Fishing", "放杆")
+            startedFishing = True
+            count = count + 1
+        End If
+        //Delay 10
+    Loop
+		
+    //Call Alert("Fishing", "等待拉杆")
+    Do While startedFishing = True
+        rColorCatchGreen = GetPixelColor(1058, 489)
+        p1 = GetPixelColor(1078, 580) // 提  point
+        //p2 = GetPixelColor(1098, 578) // 杆  point
+        //TracePrint(rColorCatchGreen)
+        //TracePrint(p1)
+        //TracePrint(p2)
+        If (Left(CStr(rColorCatchGreen), 1) = "9" And p1 = "FFFFFF") Then 
+            Touch 1083, 524, 100//156, 1135, 100
+            Touch 1083, 524, 100
+            Touch 1083, 524, 100
+            Call Alert("Fishing", "拉杆")
+            startedFishing = False
+        End If
+        //Delay 1
+    Loop
+    
+	If fishTime = 0 Then
+		Goto a
+    ElseIf count < fishTime Then
+        Goto a
+    End If
+End Sub
+
+Sub Gardening
+	Dim iHour, iMin
+	//close top menu
+	If CmpColorEx("1055|50|FFFCFB,1058|50|EE9966",0.9) = 1 Then
+		Touch 1055, 50, 200
+	End If
+
+    Rem a
+    //Dim pointA = GetPixelColor(802, 280)
+    //Dim pointB = GetPixelColor(805, 288)
+    //Dim color = "BEE3EF"
+	
+	iHour = DateTime.Hour()
+	iMin = DateTime.Minute()
+	
+	If ((iHour = 1 or iHour = 3 or iHour = 5 or iHour = 7 or iHour = 9 or iHour = 11) and iMin < 40) or ReadUIConfig("园丁自动开始停止") = False Then 
+		//click garden button
+    	//If (pointA = color and pointB = color) Then 
+    	If CmpColorEx("802|280|BEE3EF,805|288|C2E3EC",0.95) = 1 Then
+        	Touch 802, 280, 100
+    	End If
+    	
+		
+		// verification code screen 颜色 FFFFFF 偏色 111111
+		If CmpColorEx("621|487|FFFFFF,622|505|FFFFFF,652|489|FFFFFF,653|505|FFFFFF,639|234|D3CFD3", 0.9) = 1 Then 
+			Call Alert("Gardening", "验证码")
+			Delay 1000
+			
+			Dim ocrchar
+			Dim resultLength
+			Dim result
+			Dim idx = 1
+			Dim num = 0
+			
+			ocrchar = Ocr(515, 330, 765, 370, "FFFFFF-111111", 1)
+			Traceprint ocrchar
+			result = zm.Calculator(ocrchar)
+			TracePrint result
+			resultLength = Len(CStr(result))
+			Call Alert("Gardening", CStr(result))
+			Delay 1000
+			
+			If result <> Null Then 
+				Touch 700, 400, 200 // touch to open num pad
+				Delay 1000
+				For resultLength
+					num = CInt(Mid(result, idx, 1))
+					Call VerificationKeyPad(num)
+					idx = idx + 1
+					Delay 1000
+				Next
+				
+				Call VerificationKeyPad("yes") // touch yes in num pad
+				Delay 1000
+					
+				Touch 700, 500, 200 // touch confirm button
+				Delay 1000
+			End If
+		End If
+		
+    	Delay 150
+	Else
+		Delay 30000
+	End If
+	
+    Goto a
+End Sub
+
+/**************************************************************************
+任务区域-开始
+**************************************************************************/
+Sub BoardMission
+	Call CheckWholeMapAttack()
+
+	If (ReadUIConfig("看板先隐藏任务")) Then
+    	Alert("BoardMission", "隐藏其他任务")
+    	Call HideAllMission()
+    	Call DelayMin()
+	End If
+	
+	If (ReadUIConfig("看板自动接任务")) Then
+    	Call GoMissionBoard()
+		
+    	Dim isMissionBoard = False
+    	Do While isMissionBoard = False
+        	isMissionBoard = CheckIsMissionBoard()
+        	Call DelayMid()
+    	Loop
+		
+		Touch 100, 70, 100
+		Call DelayMin()
+		Touch 100, 70, 100
+		Call DelayMid()
+		
+    	Call Alert("BoardMission", "开始接受任务")
+    	Call DelayMid()
+    	Call TakeMission()
+    	Call Alert("BoardMission", "已接受所有任务")
+    	Call DelayMin()
+	End If
+
+    //ShowMessage "开始提交任务"
+    //Delay 2000
+    //Call SubmitMission()
+    //ShowMessage "已提交所有任务"
+    //Delay 2000
+
+    Call Alert("BoardMission", "开始执行任务")
+    Call DelayMin()
+    Call DoMission(0, 0, 0)
+    Call Alert("BoardMission", "任务执行完毕")
+    Call DelayMin()
+	
+End Sub
+
+/**************************************************************************
+萌王任务区域-开始
+**************************************************************************/
+Sub Board2Mission
+	Call CheckWholeMapAttack()
+
+	If (ReadUIConfig("萌王先隐藏任务")) Then
+    	Alert("Board2Mission", "隐藏其他任务")
+    	Call HideAllMission()
+    	Call DelayMin()
+	End If
+	
+	If (ReadUIConfig("萌王自动接任务")) Then
+    	Call GoMissionBoard()
+		
+    	Dim isMissionBoard = False
+    	Do While isMissionBoard = False
+        	isMissionBoard = CheckIsMissionBoard()
+        	Call DelayMid()
+    	Loop
+		
+		Touch 300, 70, 100
+		Call DelayMin()
+		Touch 300, 70, 100
+		Call DelayMid()
+		
+    	Call Alert("Board2Mission", "开始接受任务")
+    	Call DelayMin()
+    	Call TakeMission2()
+    	Call Alert("Board2Mission", "已接受所有任务")
+    	Call DelayMin()
+	End If
+
+    //ShowMessage "开始提交任务"
+    //Delay 2000
+    //Call SubmitMission()
+    //ShowMessage "已提交所有任务"
+    //Delay 2000
+
+    Call Alert("Board2Mission", "开始执行任务")
+    Call DelayMin()
+    Call DoMission2(0, 0, 0)
+    Call Alert("Board2Mission", "任务执行完毕")
+    Call DelayMin()
+	
+End Sub
+
+/**************************************************************************
+萌王任务区域-结束
+**************************************************************************/
+
+/**************************************************************************
+商会任务区域-开始
+**************************************************************************/
+Sub CommercialMission
+	Dim executeCount = ReadUIConfig("商会任务执行次数")
+	Dim executedCount = 0
+	Dim messageArray(3)
+    messageArray(0) = "商会任务执行次数设为"
+	
+    If (IsNull(executeCount) or executeCount = "") Then
+        executeCount = 1
+    Else 
+    	executeCount = CInt(executeCount)
+    End If
+	
+    messageArray(1) = executeCount
+    messageArray(2) = "次"
+    Call Alert("Fishing", Join(messageArray, ""))
+    Call DelayMid()
+	
+	If (ReadUIConfig("商会先隐藏任务")) Then
+    	Alert("CommercialMission", "隐藏其他任务")
+    	Call HideAllMission()
+    	Call DelayMin()
+	End If
+
+	While executedCount < executeCount
+		messageArray(0) = "第"
+		messageArray(1) = executedCount + 1
+		messageArray(2) = "次执行商会任务"
+		executedCount = executedCount + 1
+		
+    	Call Alert("Fishing", Join(messageArray, ""))
+    	Call DelayMid()
+		
+		If (ReadUIConfig("商会自动接任务")) Then	
+    		Call GoCommercialBoard()
+			
+    		Do While IsCommercialDialog() = False
+        		Call DelayLong()
+    		Loop
+		
+    		Call Alert("CommercialMission", "和商会NPC交谈页面，选择商会委托")
+    		Touch 1108, 507, 100
+    		Call DelayMin()
+			
+    		Call Alert("CommercialMission", "开始接受任务")
+    		Call DelayMin()
+    		
+    		If TakeCommercialMission() = false Then 
+    			EndScript
+    		End If
+    		
+    		Call Alert("CommercialMission", "已接受任务")
+    		Call DelayMin()
+		End If
+			
+    	Call Alert("CommercialMission", "开始执行任务")
+    	Call DelayMin()
+    	Call DoCommercialMission(0)
+    	Call Alert("CommercialMission", "任务执行完毕")
+    	Call DelayMin()
+	Wend
+End Sub
+
+Sub GoCommercialBoard
+    Dim moreButtonA = GetPixelColor(1058, 49)
+    Dim moreButtonB = GetPixelColor(1058, 56)
+	
+    // check the expand/collapse button beside the mini map is expanded or not, if not then expand it
+    // "F6F2EF", "FDF6EF"
+    If (Left(CStr(moreButtonA), 1) = "F" and Left(CStr(moreButtonB), 1) = "F") Then 
+        Touch 1058, 49, 100
+        Call DelayMin()
+    End If
+	
+    // touch carnival button
+    Touch 891,38, 100
+    Call DelayMin()
+	
+    // touch comercial mission icon
+    Touch 180, 280, 100
+    Call DelayMin()
+    Touch 180, 280, 100
+    Call DelayMin()
+    Touch 180, 280, 100
+    Call DelayMin()
+	
+    // touch go commercial mission button
+    Touch 641, 590, 100
+    Call DelayMin()
+End Sub
+
+Function TakeCommercialMission
+    Dim b1 = GetPixelColor(219,600) // headgear mission button, id = 1
+    Dim b2 = GetPixelColor(637,600) // armor mission button, id = 2
+    Dim b3 = GetPixelColor(1057,600) // card mission button, id = 3
+    Dim x = 0
+    Dim y = 600
+    Dim colorArray(3)
+    
+	Dim missionTypeId = CInt(ReadUIConfig("商会任务种类"))
+	
+	If (missionTypeId = 0) Then 
+		Call Alert("CommercialMission", "接受头饰任务") 
+		x = 270
+	ElseIf (missionTypeId = 1) Then
+		Call Alert("CommercialMission", "接受装备任务") 
+		x = 648
+	ElseIf (missionTypeId = 2) Then
+		Call Alert("CommercialMission", "接受卡片任务") 
+		x = 1026
+	End If
+	Call DelayMin()
+	
+	colorArray(0) = x
+	colorArray(1) = y
+	colorArray(2) = "E39980"
+	Dim cmpColor = Join(colorArray, "|")
+	
+	//If (GetPixelColor(x, y) = "E39A7F") Then 
+	If CmpColorEx(cmpColor,0.95) = 1 Then
+		Touch x, y, 100
+		Call DelayMin()
+	End If
+	
+	//If (GetPixelColor(x, y) = "629CE6") Then
+	colorArray(2) = "5F99E3"
+	cmpColor = Join(colorArray, "|")
+	If CmpColorEx(cmpColor,0.95) = 1 Then
+		Call Alert("CommercialMission", "接受任务成功")
+		Touch 1247,43, 100
+		TakeCommercialMission = True
+	Else 
+		Call Alert("CommercialMission", "接受任务失败")
+		TakeCommercialMission = False
+	End If
+End Function
+
+Sub DoCommercialMission(count)
+    Dim missionAvail_1 = GetPixelColor(69, 215)
+    Dim missionAvail_2 = GetPixelColor(69, 296)
+    Dim touchMissionX = 0
+    Dim touchMissionY = 0
+    Dim quantity = ReadUIConfig("商会购买数量")
+    Dim resultLength = 0
+    Dim idx = 1
+	Dim num = 0
+	
+    // sometime main mission cannot be hidden, so have to check daily mission 
+    // is at first slot or second slot
+    //If (Left(CStr(missionAvail_1), 1) = "F") Then
+    If CmpColorEx("69|215|F260D1",0.8) = 1 Then
+        touchMissionX = 260
+        touchMissionY = 210
+    //ElseIf (Left(CStr(missionAvail_2), 1) = "F") Then 
+    ElseIf CmpColorEx("69|296|E55BC5",0.8) = 1 Then
+        touchMissionX = 260
+        touchMissionY = 290
+    End If
+    
+    If (IsNull(quantity) or quantity = 0) Then 
+    	quantity = 15
+    End If
+	
+    Call Alert("DoCommercialMissionCount", count)
+	
+    If (touchMissionX > 0 or count < 10) Then 
+        Call Alert("DoCommercialMission", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+    End If
+    
+    Rem CheckAction
+    
+    If IsLoading() = True Then
+    	Call DelayLong()
+    	count = 0
+    	Goto CheckAction
+    ElseIf IsPathFinding() = True Then 
+    	Call DelayLong()
+    	count = 0
+    	Goto CheckAction
+   	ElseIf IsCommercialDialog() = True Then 
+    	Touch 1165, 365, 100 //click the 3rd button to goto submit item page
+    	Call DelayMin()
+    	count = 0
+    	Goto CheckAction
+    ElseIf IsSubmitItemCheck() = True Then
+    	Touch 1022, 615, 100 // click to open item location list
+    	Call DelayMin()
+    	Touch 549, 262, 100 // click on the first location of the list
+    	Call DelayLong()
+    	Call DelayLong()
+    	count = 0
+    	Goto CheckAction
+    ElseIf IsBuyScreen() = True Then
+    	Touch 580, 485, 100 // click on quantity box
+    	Call DelayMin()
+    	//Call BuyQtyPress(2) // click number 2
+    	//Call DelayMin()
+    	//Call BuyQtyPress(0) // click number 0
+    	//Call DelayMin()
+    	
+    	resultLength = Len(CStr(quantity))
+		Call Alert("Buy Qty", CStr(quantity))
+		Call DelayMin()
+		
+		For resultLength
+			num = CInt(Mid(quantity, idx, 1))
+			Call BuyQtyPress(num)
+			idx = idx + 1
+			Delay 300
+		Next
+		Call DelayMin()
+    	
+    	Call BuyQtyPress("yes") // click confirm
+    	Call DelayMin()
+    	Touch 600, 600, 100 // click buy
+    	Call DelayMin()
+    	Touch 1215, 60, 100 // exit from shop
+    	Call DelayMin()
+    	Call Alert("DoCommercialMission", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        count = 0
+        Goto CheckAction
+    ElseIf IsCommercialBuyScreen() = True Then
+    	Touch 1116, 498, 100 // click on quantity box
+    	Call DelayMin()
+    	//Call BuyQtyPressCommercial(1) // click number 2
+    	//Call DelayMin()
+    	//Call BuyQtyPressCommercial(5) // click number 0
+    	//Call DelayMin()
+    	
+    	resultLength = Len(CStr(quantity))
+		Call Alert("Buy Qty", CStr(quantity))
+		Call DelayMin()
+		
+		For resultLength
+			num = CInt(Mid(quantity, idx, 1))
+			Call BuyQtyPressCommercial(num)
+			idx = idx + 1
+			Delay 300
+		Next
+		Call DelayMin()
+    	
+    	Call BuyQtyPressCommercial("yes") // click confirm
+    	Call DelayMin()
+    	Touch 1042,622, 100 // click buy
+    	Call DelayMin()
+    	Touch 1175,47, 100 // exit from shop
+    	Call DelayMin()
+    	Call Alert("DoCommercialMission", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        count = 0
+        Goto CheckAction
+    ElseIf IsSubmitItem() = True Then
+    	Touch 1022, 615, 100
+    	Call DelayMid()
+    	If IsSubmitItem() = True Then 
+    		Call Alert("DoCommercialMission", "需要物品还没收集完整")
+    		Call DelayMin()
+    		Touch 871, 275, 100
+    		Call DelayMin()
+    		Touch 764, 159, 100
+    		Call DelayMin()
+    		Touch 760, 264, 100
+    		Call DelayMin()
+    		count = 0
+    		Goto CheckAction
+    	Else 
+    		Call Alert("DoCommercialMission", "任务交付成功")
+    		Call DoCommercialMission(0)
+    	End If
+    ElseIf count > 10 Then
+    	Call Alert("DoCommercialMission", "结束")
+    	Call DelayMin()
+    	
+    	If ReadUIConfig("全套选框") = False Then
+    		Call GoProntera()
+    	End If
+    Else 
+    	Call Alert("DoCommercialMission", "侦察不到目前在进行着什么动作")
+    	Call DelayMin()
+    	count = count + 1
+    	Call DoCommercialMission(count)
+    End If
+End Sub
+/**************************************************************************
+商会任务区域-结束
+**************************************************************************/
+
+/**************************************************************************
+公会任务区域-开始
+**************************************************************************/
+Sub GuildMission()
+	//check menu page
+	//If GetPixelColor(1220, 265) = "E78F5D" And GetPixelColor(1250, 265) = "FFFFFF" Then 
+	If CmpColorEx("1220|265|E78F5D,1250|265|FFFFFF",0.95) = 1 Then
+		Call Alert("GuildMission", "切换菜单")
+		Touch 1230, 265, 100
+		Call DelayMin()
+	End If
+	
+	Call GoGuildMission()
+	
+	Call DoGuildMission()
+End Sub
+
+Sub GoGuildMission()
+	Call Alert("GoGuildMission", "打开公会页面")
+	Touch 950, 400, 100
+	Call DelayMid()
+	
+	Call Alert("GoGuildMission", "打开公会活动页面")
+	Touch 500, 120, 100
+	Call DelayMin()
+	
+	Call Alert("GoGuildMission", "打开公会订单页面")
+	Touch 400, 315, 100
+	Call DelayMid()
+End Sub
+
+Sub DoGuildMission()
+	Dim goingProntera = False
+	Dim count = 0
+	
+	Rem CheckAction
+	
+	If IsPathFinding() = True or IsLoading() = True Then 
+    	Call DelayLong()
+    	Goto CheckAction
+    ElseIf IsBuyScreen() = True Then
+    	Touch 580, 485, 100 // click on quantity box
+    	Call DelayMin()
+    	Call BuyQtyPress(5) // click number 5
+    	Call DelayMin()
+    	Call BuyQtyPress(0) // click number 0
+    	Call DelayMin()
+    	Call BuyQtyPress("yes") // click confirm
+    	Call DelayMin()
+    	Touch 600, 600, 100 // click buy
+    	Call DelayMin()
+    	Touch 1215, 60, 100 // exit from shop
+    	Call DelayLong()
+    	
+    	If IsGuildMission() = True Then 
+    		//touch submit button
+    		//Touch 1111, 570, 100
+    		SubmitGuildMission()
+    		Call DelayMin()
+    	Else
+    		If CmpColorEx("1220|265|E78F5D,1250|265|FFFFFF",0.95) = 1 Then
+				Call Alert("GuildMission", "切换菜单")
+				Touch 1230, 265, 100
+				Call DelayMin()
+			End If
+    		
+    		Call GoGuildMission()
+    	End If
+    	
+        Goto CheckAction
+    ElseIf IsTradeCentre() = True Then
+    	Call Alert("DoGuildMission", "任务道具")
+    	Touch 400, 230, 100 //click on first item to buy
+    	Call DelayMin()
+    	//Touch 540, 380, 100 //click on quantity box
+    	//Call DelayMin()
+    	//Call BuyQtyPressCommercial(1) // click number 1
+    	//Call DelayMin()
+    	//Call BuyQtyPressCommercial("yes") // click confirm
+    	//Call DelayMin()
+    	Touch 445, 600, 100 // click buy
+    	Call DelayMid()
+    	Call Alert("DoGuildMission", "购买中")
+    	Do While CmpColorEx("611|95|8E6EFF",0.9) <> 1
+        	Call DelayMid()
+    	Loop
+    	Call Alert("DoGuildMission", "交易记录")
+    	Touch 520, 100, 100 // click trade history
+    	Call DelayMid()
+    	Call Alert("DoGuildMission", "选择")
+    	Touch 1140, 250, 100 // select purchased item
+    	Call DelayMid()
+    	//if still not selected thenselect again
+    	Do While CmpColorEx("1143|255|C6C3C2,1169|246|C6C3C2", 0.95) = 1 
+    		Call Alert("DoGuildMission", "再尝试选择")
+    		Touch 1140, 250, 100 // select purchased item
+    		Call DelayMin()
+    	Loop
+    	Call Alert("DoGuildMission", "领取")
+    	Touch 1200, 170, 100 // touch collect
+    	Call DelayMin()
+    	Touch 1200, 170, 100 // touch collect
+    	Call DelayMin()
+    	Touch 1200, 170, 100 // touch collect
+    	Call DelayMin()
+    	Touch 1175,47, 100 // exit from shop
+    	Call DelayMid()
+    	Goto CheckAction
+    ElseIf IsGuildMission() = True Then
+    	//touch submit button
+    	//Touch 1111, 570, 100
+    	//Call DelayMin()
+    	//touch submit button
+    	//Touch 1111, 570, 100
+    	//Call DelayMin()
+    	//touch submit button
+    	//Touch 1111, 570, 100
+    	//Call DelayMin()
+    	//touch submit button
+    	//Touch 1111, 570, 100
+    	//Call DelayMin()
+    	//If IsGuildMissionDo() = True Then 
+    		//touch item icon
+    		//Touch 1111, 150, 100
+    		//Call DelayMin()
+    		//touch get
+    		//Touch 780, 160, 100
+    		//Call DelayMin()
+    		//touch first suggestion
+    		//Touch 900, 250, 100
+    		//Call DelayMid()
+    	//End If
+    	
+    	If SubmitGuildMission() Then 
+    		//touch item icon
+    		Touch 1111, 150, 100
+    		Call DelayMin()
+    		//touch get
+    		Touch 780, 160, 100
+    		Call DelayMin()
+    		//touch first suggestion
+    		Touch 900, 250, 100
+    		Call DelayMid()
+    		Goto CheckAction
+    	Else 
+    		Call Alert("DoGuildMission", "公会任务结束")
+   			Touch 1150, 70, 100 // exit guild mission screen
+   			Call DelayMin()
+   			Touch 1175, 50, 100 // exit guild screen
+   			Call DelayMin()
+   			Call GoProntera()
+			Call DelayLong()
+   			//Goto CheckAction
+    	End If
+   	ElseIf IsGuildMissionLocked() = True Then
+   		Call Alert("DoGuildMission", "公会任务结束")
+   		Touch 1150, 70, 100 // exit guild mission screen
+   		Call DelayMin()
+   		Touch 1175, 50, 100 // exit guild screen
+   		Call DelayMin()
+   		If goingProntera = False Then 
+   			goingProntera = True
+   			If ReadUIConfig("全套选框") = False Then
+   				Call GoProntera()
+				Call DelayLong()
+   				Goto CheckAction
+   			End If
+   		End If
+   	Else 
+   		Call Alert("DoGuildMission", "侦察不到目前在进行着什么动作")
+   		Call DelayMin()
+   		Call Alert("DoGuildMission", "等一会儿")
+   		Call DelayLong()
+   		count = count + 1
+   		
+   		If (count > 1) Then 
+   			Call GoGuildMission()
+   		End If
+   			
+   		Goto CheckAction
+   	End If
+End Sub
+
+/**************************************************************************
+公会任务区域-结束
+**************************************************************************/
+
+/**************************************************************************
+全套任务区域-开始
+**************************************************************************/
+Sub AllMission
+	
+	Dim stringHour = ReadUIConfig("任务定时_小时")
+	Dim stringMinute = ReadUIConfig("任务定时_分钟")
+	Dim timeHour = -1
+	Dim timeMinute = -1
+	Dim messageArray(4)
+    Dim threadCheckDisconnect
+    Dim currHour = -1
+    Dim currMinute = -1
+	
+    If (IsNull(stringHour) or stringHour = "") Then
+        timeHour = -1
+    Else 
+    	timeHour = CInt(stringHour)
+    End If
+    
+    If (IsNull(stringMinute) or stringMinute = "") Then
+        timeMinute = -1
+    Else 
+    	timeMinute = CInt(stringMinute)
+    End If
+    
+    If (timeHour > -1 And timeMinute > -1) Then 
+    	messageArray(0) = "定时全套 "
+    	messageArray(1) = stringHour
+    	messageArray(2) = ":"
+    	messageArray(3) = stringMinute
+    	
+    	
+    	threadCheckDisconnect = Thread.Start(DisconnectCheck)
+		Call DelayMin()
+		
+		//Rem checkTime
+		
+    	Do While timeHour <> currHour or timeMinute <> currMinute 
+    		Call Alert("AllMission", Join(messageArray, ""))
+        	
+        	currHour = DateTime.Hour()
+        	currMinute = DateTime.Minute()
+        
+        	TracePrint(currHour)
+        	TracePrint(currMinute)
+        	TracePrint(timeHour)
+        	TracePrint(timeMinute)
+			TracePrint(timeHour <> currHour)
+			TracePrint(timeMinute <> currMinute)
+    		Delay 10000
+        	//Goto checkTime
+        Loop
+        
+        Call Alert("AllMission", "时间到，开始全套任务")
+        Call DelayMin()
+    	
+		Thread.Stop(threadCheckDisconnect)
+    End If
+    
+    //check if mission tab is active
+	If CmpColorEx("33|276|FFFFFF,22|276|FFFFFF", 0.95) <> 1 Then 
+		Touch 33, 276, 100
+		Call DelayMin()
+	End If
+    
+    If IsHunting() = True Then 
+    	Call Alert("AllMission", "取消自动打怪")
+    	Call DelayMin()
+    	Touch 820, 546, 100
+	End If
+    
+    If ReadUIConfig("钓鱼任务") = True Then
+		Call Alert("AllMission", "先做钓鱼任务")
+		Call DelayMin()
+		Call FishingMission()
+	End If
+	
+	IF ReadUIConfig("看板选框") = True Then
+		Call Alert("AllMission", "看板任务")
+		Call DelayMin()
+    	Call BoardMission()
+    End If
+    
+    If ReadUIConfig("萌王选框") = True Then
+    	Call DelayMin()
+    	Call Alert("AllMission", "萌王任务")
+		Call DelayMin()
+    	Call Board2Mission()
+    End If
+    
+    If ReadUIConfig("商会选框") = True Then
+    	Call DelayMin()
+    	Call Alert("AllMission", "商会任务")
+		Call DelayMin()
+    	Call CommercialMission()
+    End If
+    
+    If ReadUIConfig("公会选框") = True Then
+    	Call DelayMin()
+    	Call Alert("AllMission", "公会任务")
+		Call DelayMin()
+    	Call GuildMission()
+    End If
+    
+    Call DelayMin()
+    Call Alert("AllMission", "全套任务结束")
+    Call DelayMin()
+    Call GoProntera()
+End Sub
+
+/**************************************************************************
+全套任务区域-结束
+**************************************************************************/
+
+/**************************************************************************
+钓鱼任务区域-开始
+**************************************************************************/
+Sub FishingMission()
+	Call Alert("FishingMission", "钓鱼任务")
+	Call DelayMin()
+	
+	//Dim missionAvail_1 = CmpColorEx("69|212|F762D4,69|223|F362CE",0.8)
+    //Dim missionAvail_2 = CmpColorEx("69|293|F762D4,69|304|F362CE",0.8)
+	
+	Dim missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
+    Dim missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
+	
+	//Dim missionAvail_1 = GetPixelColor(69, 212)
+    //Dim missionAvail_2 = GetPixelColor(69, 293)
+	Dim touchMissionX = 0
+    Dim touchMissionY = 0
+	
+    // sometime main mission cannot be hidden, so have to check fishing mission 
+    // is at first slot or second slot
+    //If (Left(CStr(missionAvail_1), 1) = "F") Then 
+    //    touchMissionX = 260
+    //    touchMissionY = 210
+    //ElseIf (Left(CStr(missionAvail_2), 1) = "F") Then 
+    //    touchMissionX = 260
+    //    touchMissionY = 290
+    //End If
+    
+    If (missionAvail_1 = 1) Then 
+        touchMissionX = 150
+        touchMissionY = 230
+    ElseIf (missionAvail_2 = 1) Then 
+        touchMissionX = 150
+        touchMissionY = 310
+    End If
+	
+	If (touchMissionX > 0 Or touchMissionY > 0) Then 
+		Touch touchMissionX, touchMissionY, 100
+		
+		Rem CheckAction
+		
+		//missionAvail_1 = GetPixelColor(69, 212)
+    	//missionAvail_2 = GetPixelColor(69, 293)
+    	
+    	//missionAvail_1 = CmpColorEx("69|212|F762D4,69|223|F362CE",0.9)
+    	//missionAvail_2 = CmpColorEx("69|293|F762D4,69|304|F362CE",0.9)
+    	
+    	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
+    	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
+		
+		If IsPathFinding() = True or IsLoading() = True Then 
+    		Call DelayLong()
+    		Goto CheckAction
+    	ElseIf IsSkipChat() = True Then
+    		Call Alert("FishingMission", "跳过谈话")
+            Touch 1120, 35, 100 // skip chat
+            Call DelayMid()
+            Touch touchMissionX, touchMissionY, 100
+            Call DelayMid()
+            Touch 1100, 350, 100 // select 3rd button
+            Call DelayMid()
+            Touch 1000, 600, 100 // submit 10 fishing item
+            Call DelayMid()
+            Touch touchMissionX, touchMissionY, 100
+            Call DelayMid()
+            Touch 1100, 350, 100 // select 3rd button
+            Call DelayMid()
+            Touch 1120, 35, 100 //skip chat
+            Call DelayMid()
+            Touch touchMissionX, touchMissionY, 100
+    		Goto CheckAction
+    	ElseIf IsButtonFishing() Then
+    		Touch 800, 300, 100 // press fishing button
+    		Call DelayMin()
+    		Touch 900, 650, 100 // press fishing bait
+    		Call DelayMin()
+    		Touch 700, 400, 100 // select magic fishing bait
+    		Call DelayMin()
+    		Touch 1100, 500, 100 // throw rod
+    		Touch 1100, 500, 100 // throw rod
+    		Touch 1100, 500, 100 // throw rod
+    		Call DelayLong()
+    		Call DelayLong()
+    		Call DelayLong()
+    		Call DelayLong()
+    		Call DelayLong()  // wait fishing done
+    		Touch 800, 420, 100 // press make fish stone button
+    		Call DelayMin()
+    		Touch 800, 450, 100 // press confirm
+    		Call DelayLong()
+    		Touch touchMissionX, touchMissionY, 100
+    		Call DelayLong()
+    		Call DelayLong() // walking to npc
+    		Touch 1230, 365, 100 // press third button
+    		Call DelayMid()
+    		Touch 1120, 35, 100 // skip chat
+            Call DelayMid()
+    		Goto CheckAction
+    	//ElseIf Left(CStr(missionAvail_1), 1) <> "F" And Left(CStr(missionAvail_2), 1) <> "F" Then
+    	ElseIf missionAvail_1 <> 1 And missionAvail_2 <> 1 Then
+    		Call Alert("FishingMission", "钓鱼任务结束")
+			Call DelayMin()
+		Else 
+			Touch touchMissionX, touchMissionY, 100
+			Call DelayMid()
+			Goto CheckAction
+    	End If
+	Else 
+		Call Alert("FishingMission", "没侦查到钓鱼任务")
+		Call DelayMin()
+	End If
+End Sub
+
+/**************************************************************************
+钓鱼任务区域-结束
+**************************************************************************/
+
+/**************************************************************************
+断线检测区域-开始
+**************************************************************************/
+Sub DisconnectCheck()
+    Rem action
+    Call Alert("DisconnectCheck", "检测断线")
+    
+    If IsDisconnected() = True Then 
+    	Call DelayLong()
+    	Touch 639, 464, 100
+    Else 
+    	Call DelayLong()
+    	Call DelayLong()
+    	Call DelayLong()
+    End If
+    
+    Goto action
+End Sub
+
+/**************************************************************************
+断线检测区域-结束
+**************************************************************************/
+
+Function CheckIsMissionBoard
+    Dim boardPointA = GetPixelColor(46,120)
+    Dim boardPointB = GetPixelColor(45,600)
+    Dim boardPointC = GetPixelColor(1231,598)
+    Dim boardPointD = GetPixelColor(1188,9)
+	
+    // make sure it is not at home screen
+    Dim sc7 = GetPixelColor(1259, 209) // mini map bottom right
+    Dim sc8 = GetPixelColor(1259, 199) // mini map bottom right "+" symbol
+    Dim sc9 = GetPixelColor(1234, 266) // right middle menu button
+	
+	TracePrint(boardPointA)
+	TracePrint(boardPointB)
+	TracePrint(boardPointC)
+	TracePrint(boardPointD)
+	
+	// And sc7 <> "EEEEEE" And sc8 <> "837E83" And sc9 <> "E78F5D"
+	// a 938185
+    // If (boardPointA = "6789BC" And boardPointB = "7B737B" And boardPointC = "797279" And boardPointD = "6F9FBE") Then
+    // If CmpColorEx("46|120|6789BC,45|600|7B737B,1231|598|797279,1188|9|6F9FBE", 0.95) = 1 Then 
+    // If CmpColorEx("12|11|456687,45|600|7B737B,1231|598|797279,1188|9|6F9FBE",0.95) = 1 Then
+    //If CmpColorEx("12|11|83695D,45|600|25392B,1231|598|1A2C21,1188|9|684F57", 0.85) = 1 OR CmpColorEx("12|11|456687,45|600|7B737B,1231|598|797279,1188|9|6F9FBE", 0.95) = 1 Then 
+    If CmpColorEx("125|92|FFFFFF,874|44|FFFFFF,635|661|FFFFFF,1103|42|517AA2", 0.9) = 1 Then
+        Call Alert("CheckIsMissionBoard:", "已进入看板任务页面")
+        TracePrint("checkIsMissioBoard True")
+        CheckIsMissionBoard = true
+    Else 
+        TracePrint("CheckIsMissionBoard False")
+        CheckIsMissionBoard = false
+    End If		
+End Function
+
+Sub HideAllMission
+    //open mission window
+    Touch 26, 277, 100
+    Touch 26, 277, 100
+    Touch 26, 277, 100
+    Call DelayMin()
+	
+    Dim continue = true
+    Dim chkX = 300
+    Dim chkY = 200
+
+    Do While continue = True
+        continue = CheckToHideMission(chkX, chkY)
+        chkY = chkY + 50
+        Call DelayMin()
+    Loop
+
+    // exit mission windows
+    Touch 1006, 74, 100
+    Call DelayMin()
+End Sub
+
+Function CheckToHideMission (chkX, chkY)
+    Touch chkX, chkY, 100
+    Delay 1000
+    Dim color = GetPixelColor(chkX, chkY)
+    Dim checkBoxColor = GetPixelColor(280, 600)
+    Dim colorArray(3)
+    colorArray(0) = CStr(chkX)
+    colorArray(1) = CStr(chkY)
+    colorArray(2) = "9EDFFF"
+    Dim cmpColor = Join(colorArray, "|")
+   
+    // if already accepted many mission (one situation is accepted all board mission), 
+    // the first mission point 315, 220, color will not start with 9 (F1F1F1)
+    // at this case, it will stop from hidding mission
+    // If (Left(CStr(color), 1) = "9") Then
+    If CmpColorEx(cmpColor, 0.95) = 1 Then 
+    	TracePrint("aaaa")
+        //If (checkBoxColor <> "64D9B5") Then
+        If CmpColorEx("280|600|66DDB8", 0.95) <> 1 Then 
+        	TracePrint("bbbb")
+            Touch 280, 600, 100
+            Delay 1000
+            checkToHideMission = True
+        ElseIf (CStr(chkY) = "200") Then
+        	TracePrint("cccc")
+			checkToHideMission = False
+		Else 
+			TracePrint("dddd")
+			TracePrint(chkY)
+			checkToHideMission = True
+		End If
+        
+        //If (chkY = "220" and checkBoxColor = "66DDAA") Then 
+        //    checkToHideMission = False
+        //Else 
+        //    checkToHideMission = True
+        //End If
+    Else 
+    	TracePrint("eeee")
+        checkToHideMission = False
+    End If
+End Function
+
+Sub GoMissionBoard
+    Dim moreButtonA = GetPixelColor(1058, 49)
+    Dim moreButtonB = GetPixelColor(1058, 56)
+	
+    // check the expand/collapse button beside the mini map is expanded or not, if not then expand it
+    // "F6F2EF", "FDF6EF"
+    If (Left(CStr(moreButtonA), 1) = "F" and Left(CStr(moreButtonB), 1) = "F") Then 
+        Touch 1058, 49, 100
+        Call DelayMin()
+    End If
+	
+    // touch carnival button
+    Touch 891,38, 100
+    Call DelayMin()
+	
+    // touch board mission icon
+    Touch 642, 463, 100
+    Call DelayMin()
+    Touch 642, 463, 100
+    Call DelayMin()
+    Touch 642, 463, 100
+    Call DelayMin()
+	
+    // touch go board mission button
+    Touch 641, 590, 100
+    Call DelayMin()
+End Sub
+
+Sub TakeMission	
+    Call CheckMission(313, 116, "8660DB", 313, 136, 0.85)
+    Call CheckMission(571, 131, "DAEBEB", 570, 180, 0.85)
+    Call CheckMission(800, 173, "D6DEE7", 800, 173, 0.85)
+    Call CheckMission(986, 84, "966BEB", 986, 104, 0.85)
+    Call CheckMission(1170, 123, "9667EB", 1170, 143, 0.85)
+    Call CheckMission(283, 368, "9669EB", 283, 388, 0.85)
+    Call CheckMission(480, 380, "BD9BF1", 481, 379, 0.85)
+    Call CheckMission(678, 380, "A67EFF", 678, 397, 0.85)
+    Call CheckMission(925, 380, "8967EF", 925, 390, 0.85)
+    Call CheckMission(1091, 412, "8A65DF", 1091, 412, 0.85)
+    
+    /*
+    Call CheckMission(313, 116, "8D5CE8", 313, 136)
+    Call CheckMission(571, 131, "D5E9EB", 570, 180)
+    Call CheckMission(800, 173, "D6E2E2", 800, 173)
+    Call CheckMission(986, 84, "9261ED", 986, 104)
+    Call CheckMission(1170, 123, "9160EC", 1170, 143)
+    Call CheckMission(283, 368, "9261ED", 283, 388)
+    Call CheckMission(481, 359, "9261ED", 481, 379)
+    Call CheckMission(678, 377, "8F5EEA", 678, 397)
+    Call CheckMission(925, 370, "905FEB", 925, 390)
+    Call CheckMission(1091,412, "8F5EEA", 1091, 412)
+	*/
+	
+    Touch 1224, 57, 100
+End Sub
+
+Sub TakeMission2
+    Call CheckMission(300,126, "CFE0E7", 300,155, 0.85)
+    Call CheckMission(571, 131, "D8E9E9", 570, 180, 0.85)
+    Call CheckMission(800, 173, "CFDFE8", 800, 173, 0.85)
+    Call CheckMission(986, 84, "9360E8", 986, 104, 0.85)
+    Call CheckMission(1170, 123, "915EE6", 1170, 143, 0.85)
+    Call CheckMission(283, 368, "925FE7", 283, 388, 0.85)
+    Call CheckMission(480, 380, "BD9BF1", 481, 379, 0.85)
+    Call CheckMission(678, 380, "A67EFF", 678, 397, 0.85)
+    Call CheckMission(925, 380, "8967EF", 925, 390, 0.85)
+    Call CheckMission(1091, 412, "8D5AE2", 1091, 412, 0.85)
+	
+    Touch 1224, 57, 100
+End Sub
+
+Sub SubmitMission
+    Dim color = "6591E7"
+	
+    Call CheckMission(193, 302, color, 193, 302, 0.9)
+    Call CheckMission(443, 331, color, 443, 331, 0.9)
+    Call CheckMission(679, 360, color, 679, 360, 0.9)
+    Call CheckMission(893, 342, color, 893, 342, 0.9)
+    Call CheckMission(1085, 388, color, 1085, 388, 0.9)
+    Call CheckMission(141, 517, color, 141,517, 0.9)
+    Call CheckMission(380, 568, color, 380, 568, 0.9)
+    Call CheckMission(589, 543, color, 589, 543, 0.9)
+    Call CheckMission(822, 564, color, 822, 564, 0.9)
+    Call CheckMission(1010, 584, color, 1010, 584, 0.9)
+	
+    Touch 1224, 57, 100
+    Delay 1500
+End Sub
+
+Sub CheckMission(chkX, chkY, color, tchX, tchY, similarity)
+    //Dim pixel = GetPixelColor(chkX, chkY)
+    Dim delayMs = 1500
+	
+	Dim cmpArray(3)
+    cmpArray(0) = chkX
+    cmpArray(1) = chkY
+    cmpArray(2) = color
+    Dim cmpColor = Join(cmpArray, "|")
+	
+	If CmpColorEx(cmpColor,similarity) = 1 Then
+		Touch tchX, tchY, 100
+        Delay delayMs
+        Touch 655, 570, 100  //accept or submit button
+        Delay delayMs
+	End If
+	
+    //If (pixel = color) Then 
+    //    Touch tchX, tchY, 100
+    //    Delay delayMs
+    //    Touch 655, 570, 100  //accept or submit button
+    //    Delay delayMs
+    //End If
+	
+End Sub
+
+Sub DoMission(count, x, y)
+    Dim action = True
+    //Dim missionAvail_1 = GetPixelColor(69, 212)
+    //Dim missionAvail_2 = GetPixelColor(69, 293)
+    //Dim missionAvail_3 = GetPixelColor(69, 311)
+    //Dim missionAvail_1 = CmpColorEx("69|212|F762D4,69|223|F362CE",0.8)
+    //Dim missionAvail_2 = CmpColorEx("69|293|F762D4,69|304|F362CE",0.8)
+    //Dim missionAvail_3 = CmpColorEx("69|311|F762D4,69|322|F362CE",0.8)
+    Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
+    Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
+    Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
+    Dim touchMissionX = x
+    Dim touchMissionY = y
+    Dim skipMissionChk = ReadUIConfig("跳过任务检查")
+    Dim missionBoxPosition = ReadUIConfig("任务框位置")
+	
+    // sometime main mission cannot be hidden, so have to check daily mission 
+    // is at first slot or second slot
+    //If (Left(CStr(missionAvail_1), 1) = "F") Then
+    //    touchMissionX = 260
+    //    touchMissionY = 210
+    //ElseIf (Left(CStr(missionAvail_2), 1) = "F") Then
+    //    touchMissionX = 260
+    //    touchMissionY = 290
+    //ElseIf (Left(CStr(missionAvail_3), 1) = "F") Then
+    //    touchMissionX = 260
+    //    touchMissionY = 305
+    //End If
+    If (skipMissionChk = True) Then 
+        If (missionBoxPosition = 0) Then 
+        	touchMissionX = 150
+        	touchMissionY = 230
+        ElseIf (missionBoxPosition = 1) Then
+        	touchMissionX = 150
+        	touchMissionY = 310
+        ElseIf (missionBoxPosition = 2) Then
+        	touchMissionX = 150
+        	touchMissionY = 325
+        End If
+    ElseIf (missionAvail_1 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 230
+    ElseIf (missionAvail_2 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 310
+    ElseIf (missionAvail_3 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 325
+    End If
+    
+    If (skipMissionChk = true) Then 
+    	Call Alert("DoMissiont", "点击特别任务框")
+    	If (CmpColorEx("69|293|4B9FED,69|304|4A9DE9", 0.9) = 1) Then 
+    		Touch 150, 230, 100
+    	Else
+        	Touch touchMissionX, touchMissionY, 100
+    	End If
+    	Call DelayMin()
+    ElseIf (touchMissionX > 0) Then 
+    	Call Alert("DoMissiont", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+    End If
+	
+    Call Alert("DoMissionCount", count)
+    
+    If (count < 10 or ReadUIConfig("跳过任务检查") = true) Then
+        //action = "" or action = Null or 
+        //or action = actionPathFinding or action = actionLoading
+        Do While action = True
+            action = CheckAndDoMissionAction(1, touchMissionX, touchMissionY)
+            TracePrint("doMission action")
+            TracePrint(action)
+            
+            If action = True Then 
+            	count = 0
+            End If
+        Loop
+        
+		Call DelayMid()
+        Call DoMission(count + 1, touchMissionX, touchMissionY)
+    ElseIf ReadUIConfig("全套选框") = False Then
+        Call DelayMid()
+        Call GoProntera()
+    End If
+End Sub
+
+//not using
+Sub DoMissionBackup(count)
+    Dim actionSkipChat = "skipchat"
+    Dim actionHunting = "hunting"
+    Dim actionButtonCheck = "buttoncheck"
+    Dim actionButtonCollect = "buttoncollect"
+    Dim actionButtonCatch = "buttoncatch"
+    Dim actionButtonPick = "buttonpick"
+    Dim actionButtonAppease = "buttonappease"
+    Dim actionButtonFind = "buttonfind"
+    Dim actionButtonCai = "buttoncai"
+    Dim actionMissionBoard = "missionboard"
+    Dim actionPathFinding = "pathfinding"
+    Dim actionLoading = "loading"
+    Dim actionDialogFirstButton = "dialogfirstbutton"
+    Dim actionDialogThirdButton = "dialogthirdbutton"
+    Dim actionDialogForthButton = "dialogforthbutton"
+    Dim actionSubmitItem = "submititem"
+    Dim actionDead = "dead"
+
+    Dim action = ""
+    Dim missionAvail_1 = GetPixelColor(69, 212)
+    Dim missionAvail_2 = GetPixelColor(69, 293)
+    Dim missionAvail_3 = GetPixelColor(69, 311)
+    Dim touchMissionX = 0
+    Dim touchMissionY = 0
+	
+    // sometime main mission cannot be hidden, so have to check daily mission 
+    // is at first slot or second slot
+    If (Left(CStr(missionAvail_1), 1) = "F") Then 
+        touchMissionX = 260
+        touchMissionY = 210
+    ElseIf (Left(CStr(missionAvail_2), 1) = "F") Then 
+        touchMissionX = 260
+        touchMissionY = 290
+    ElseIf (Left(CStr(missionAvail_3), 1) = "F") Then 
+        touchMissionX = 260
+        touchMissionY = 305
+    End If
+	
+    Call Alert("DoMissionCount", count)
+    If (Left(CStr(missionAvail_1), 1) = "F" or Left(CStr(missionAvail_2), 1) = "F" or count < 10) Then 
+        Call Alert("DoMissiont", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Delay 1500
+		
+        //action = "" or action = Null or 
+        //or action = actionPathFinding or action = actionLoading
+        Do While action = ""
+            Delay 2000
+            action = CheckMissionAction()
+            TracePrint("doMission action")
+            TracePrint(action)
+        Loop
+		
+        TracePrint("doMission")
+        TracePrint(action)
+
+        Select Case action
+        Case actionMissionBoard
+            Call Alert("DoMission", "进入任务看板")
+            Call SubmitMission()
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionSkipChat
+            Call Alert("DoMission", "跳过谈话")
+            Touch 1130, 37, 100
+            Call DelayMin()
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionButtonCheck
+            Call Alert("DoMission", "动作按钮检查")
+            Touch 856, 296, 100
+            Delay 4000
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionButtonCollect
+            Call Alert("DoMission", "动作按钮采集")
+            Touch 856, 296, 100
+            Delay 4000
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionButtonCatch
+            Call Alert("DoMission", "动作按钮捕抓")
+            Touch 856, 296, 100
+            Delay 4000
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionButtonPick
+            Call Alert("DoMission", "动作按钮采花")
+            Touch 856, 296, 100
+            Delay 4000
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionButtonAppease
+            Call Alert("DoMission", "动作按钮安抚")
+            Touch 856, 296, 100
+            Delay 4000
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionButtonFind
+        	Call Alert("DoMission", "动作按钮寻找")
+            Touch 856, 296, 100
+            Delay 4000
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionButtonCai
+        	Call Alert("DoMission", "采X按钮寻找")
+            Touch 856, 296, 100
+            Delay 4000
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionHunting
+            Call Alert("DoMission", "狩猎动作")
+            Touch touchMissionX, touchMissionY, 100
+            Delay 1000
+            Touch touchMissionX, touchMissionY, 100
+            Delay 1000
+            Touch touchMissionX, touchMissionY, 100
+            Delay 1000
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionDialogFirstButton
+            Call Alert("DoMission", "对话第一个按钮")
+            Touch 1108, 502, 100
+            Call DelayMin()
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionDialogThirdButton
+            Call Alert("DoMission", "对话第三个按钮")
+            Touch 1230, 365, 100
+            Call DelayMin()
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionDialogForthButton
+        	Call Alert("DoMission", "对话第四个按钮")
+            Touch 1230, 300, 100
+            Call DelayMin()
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actionSubmitItem
+            Call Alert("DoMission", "上交物品")
+            Touch 1022, 615, 100
+            Call DelayMin()
+            Call DoMission(0, touchMissionX, touchMissionY)
+        Case actiondead
+            Call Alert("DoMission", "死掉了")
+            Touch 1071, 641, 100
+            Call DelayLong()
+            Call DoMission(0, touchMissionX, touchMissionY)
+       	Case actionPathFinding
+       		Call Alert("DoMission", "寻路中")
+       		Call DelayMid()
+       		Call DoMission(0, touchMissionX, touchMissionY)
+       	Case actionLoading
+       		Call Alert("DoMission", "加载中")
+       		Call DelayMid()
+       		Call DoMission(0, touchMissionX, touchMissionY)
+        Case Else
+            Call Alert("DoMission", "没检测到在进行任何动作，重试")
+            Call DoMission(count + 1, touchMissionX, touchMissionY)
+        End Select
+    Else 
+        Call DelayMid()
+        Call GoProntera()
+    End If
+End Sub
+
+Sub DoMission2(count, x, y)
+    Dim action = True
+    //Dim missionAvail_1 = CmpColorEx("69|212|F762D4,69|223|F362CE",0.8)
+    //Dim missionAvail_2 = CmpColorEx("69|293|F762D4,69|304|F362CE",0.8)
+    //Dim missionAvail_3 = CmpColorEx("69|311|F762D4,69|322|F362CE",0.8)
+    Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
+    Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
+    Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
+    Dim touchMissionX = x
+    Dim touchMissionY = y
+	
+    // sometime main mission cannot be hidden, so have to check daily mission 
+    // is at first slot or second slot
+    If (missionAvail_1 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 230
+    ElseIf (missionAvail_2 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 310
+    ElseIf (missionAvail_3 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 325
+    End If
+    
+    If (touchMissionX > 0) Then 
+    	Call Alert("DoMissiont", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+    End If
+	
+    Call Alert("DoMissionCount", count)
+    If (count < 10) Then
+        //action = "" or action = Null or 
+        //or action = actionPathFinding or action = actionLoading
+        Do While action = True
+            action = CheckAndDoMissionAction(2, touchMissionX, touchMissionY)
+            TracePrint("doMission action")
+            TracePrint(action)
+            
+            If action = True Then 
+            	count = 0
+            End If
+        Loop
+
+		//Call DelayMid()
+        Call DoMission2(count + 1, touchMissionX, touchMissionY)
+    ElseIf ReadUIConfig("全套选框") = False Then
+        Call DelayMid()
+        Call GoProntera()
+    End If
+End Sub
+
+Sub GoProntera()
+	Call Alert("GoProntera", "回去普隆德拉")
+	// go back prontera
+	Touch 1130, 118, 100 //open mini map
+	Call DelayLong()
+	Touch 1196, 575, 100 // open world map
+	Call DelayLong()
+	Touch 796, 378, 100 // click on prontera
+	Call DelayLong()
+	Touch 999, 402, 100 // click on middle kafra
+	Call DelayLong()
+End Sub
+
+Sub CheckLanguage()
+	If ReadUIConfig("语言检查选框") = True Then 
+		Call Alert("CheckLanguage", "语言检查")
+		Call DelayMin()
+		Dim menuSwitch = False
+		
+		If IsNotChinese() = True Then 
+			Call DelayMin()
+			
+			//check menu page
+			If CmpColorEx("1220|265|E78F5D,1250|265|FFFFFF",0.95) = 1 Then
+				Call Alert("CheckLanguage", "切换菜单")
+				Touch 1230, 265, 100
+				Call DelayMin()
+				menuSwitch = True
+			End If
+			
+			// open setting page
+			Touch 1115, 583, 100
+			Call DelayLong()
+			
+			// click language button
+			Touch 233, 621, 100
+			Call DelayMid()
+			
+			// click chinese
+			Touch 636, 183, 100
+			Call DelayMin()
+			Touch 636, 183, 100
+			Call DelayMin()
+			Touch 636, 183, 100
+			Call DelayMin()
+			
+			// click confirm
+			Touch 744, 460, 100
+			Call DelayMid()
+			
+			// switch menu back
+			If menuSwitch = True Then 
+				Touch 1230, 265, 100
+			End If
+			
+			Call Alert("CheckLanguage", "语言转换完成")
+			Call DelayMid()
+		End If
+	End If
+End Sub
+
+Sub Check2DView()
+	If ReadUIConfig("视角检查选框") = True Then 
+		Call Alert("Check2DView", "检查视角")
+	
+		If CmpColorEx("640|563|FFFFFF,642|563|FFFFFF,662|563|FFFFFF,654|560|010203,646|546|FFFFFF",0.9) = 1 Then
+			Call Alert("Check2DView", "不需要更换")
+		Else 
+			Touch 646, 546, 100
+			Call DelayMid()
+		End If
+		Call DelayMid()
+		Call Alert("Check2DView", "检查视角完成")
+		Call DelayMin()
+	End If
+End Sub
+
+Sub CheckWholeMapAttack()	
+	If ReadUIConfig("打开全地图挂机") = True Then 
+		Call Alert("CheckWholeMapAttack", "打开全地图挂机")
+		
+		//press auto attack icon to open auto attack menu
+		Touch 820, 546, 100
+		Call DelayMid()
+		//press on auto attack setting
+		Touch 1142, 288, 100
+		Call DelayMid()
+		//press on attack whole map option 3 times
+		Touch 894, 435, 100
+		Call DelayMin()
+		Touch 894, 435, 100
+		Call DelayMin()
+		Touch 894, 435, 100
+		Call DelayMin()
+		//close auto attack menu
+		Touch 1044, 86, 100
+		Call DelayMin()
+		Touch 820, 546, 100
+		Call DelayMid()
+		
+		Call Alert("CheckWholeMapAttack", "已打开全地图挂机")
+		Call DelayMid()
+	End If
+End Sub
+
+Function CheckMissionAction()
+    If CheckIsMissionBoard() = True Then 
+        TracePrint("CheckMissionAction: missionboard")
+        CheckMissionAction = "missionboard"
+    ElseIf IsSkipChat() = True Then
+        TracePrint("CheckMissionAction: skipchat")
+        CheckMissionAction = "skipchat"
+    ElseIf IsDialogFirstButton() = True Then
+        TracePrint("checkMissionAction: dialogfirstbutton")
+        CheckMissionAction = "dialogfirstbutton"
+    ElseIf IsDialogThirdButton() = True Then
+        TracePrint("checkMissionAction: dialogthirdbutton")
+        CheckMissionAction = "dialogthirdbutton"
+	ElseIf IsDialogForthButton() = True Then
+        TracePrint("checkMissionAction: dialogforthbutton")
+        CheckMissionAction = "dialogforthbutton"
+    ElseIf IsHunting() = True Then
+        TracePrint("checkMissionAction: hunting delay 5000")
+        Delay 15000
+        CheckMissionAction = "hunting"
+    ElseIf IsButtonCheck() = True Then
+        TracePrint("checkMissionAction: buttoncheck")
+        CheckMissionAction = "buttoncheck"
+    ElseIf IsButtonCollect() = True Then
+        TracePrint("checkMissionAction: buttoncollect")
+        CheckMissionAction = "buttoncollect"
+    ElseIf IsButtonCatch() = True Then
+        TracePrint("checkMissionAction: buttoncatch")
+        CheckMissionAction = "buttoncatch"
+    ElseIf IsButtonAppease() = True Then
+        TracePrint("checkMissionAction: buttonappease")
+        CheckMissionAction = "buttonappease"
+    ElseIf IsButtonPick() = True Then
+        TracePrint("checkMissionAction: buttonpick")
+        CheckMissionAction = "buttonpick"
+    ElseIf IsButtonFind() = True Then
+        TracePrint("checkMissionAction: buttonfind")
+        CheckMissionAction = "buttonfind"
+    ElseIf IsButtonCai() = True Then
+        TracePrint("checkMissionAction: buttoncai")
+        CheckMissionAction = "buttoncai"
+    ElseIf IsSubmitItem() = True Then
+        TracePrint("checkMissionAction: submititem")
+        CheckMissionAction = "submititem"
+    ElseIf IsPathFinding() = True Then
+        TracePrint("checkMissionAction: pathfinding delay long")
+        Call DelayLong()
+        CheckMissionAction = "pathfinding"
+    ElseIf IsLoading() = True Then
+        TracePrint("checkMissionAction: loading delay long")
+        Call DelayLong()
+        CheckMissionAction = "loading"
+    ElseIf IsDead() = True Then
+        TracePrint("checkMissionAction: dead")
+        Call DelayMin()
+        CheckMissionAction = "dead"
+    Else 
+        TracePrint("checkMissionAction: doingnothing")
+        CheckMissionAction = "doingnothing"
+    End If
+End Function
+
+Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
+    If CheckIsMissionBoard() = True Then 
+    	Call DelayLong()
+        Call Alert("CheckAndDoMissionAction", "进入任务看板")
+        
+        If (board = 2) Then 
+        	Touch 300, 70, 100
+			Call DelayMin()
+			Touch 300, 70, 100
+        End If
+        
+        Call DelayLong()
+        
+        Call SubmitMission()
+        Call DelayMin()
+        Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        CheckAndDoMissionAction = True
+    ElseIf IsDialogFirstButton() = True Then
+        Call Alert("CheckAndDoMissionAction", "对话第一个按钮")
+        Touch 1108, 502, 100
+        Call DelayMid()
+        CheckAndDoMissionAction = True
+    ElseIf IsDialogSecondButton() = True Then
+        Call Alert("CheckAndDoMissionAction", "对话第二个按钮")
+        Touch 1111, 435, 100
+        Call DelayMid()
+        CheckAndDoMissionAction = True
+    ElseIf IsDialogThirdButton() = True Then
+        Call Alert("CheckAndDoMissionAction", "对话第三个按钮")
+        Touch 1230, 365, 100
+        Call DelayMid()
+        CheckAndDoMissionAction = True
+	ElseIf IsDialogForthButton() = True Then
+        Call Alert("CheckAndDoMissionAction", "对话第四个按钮")
+        Touch 1230, 300, 100
+        Call DelayMid()
+        CheckAndDoMissionAction = True
+    ElseIf IsSkipChat() = True Then
+        Call Alert("CheckAndDoMissionAction", "跳过谈话")
+        Touch 1130, 37, 100
+        Call DelayMid()
+        Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        CheckAndDoMissionAction = True
+    ElseIf IsButtonCheck() = True or IsButtonCollect() = True or IsButtonCatch() = True or IsButtonAppease() = True or IsButtonPick() = True or IsButtonFind() = True or IsButtonCai() = True or IsButtonCha() = True or IsButtonInvestigate() or IsButtonUnknown() Then
+        Call Alert("CheckAndDoMissionAction", "动作按钮")
+        Call DelayMid()
+        Touch 856, 296, 100
+        Delay 4000
+        Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        CheckAndDoMissionAction = True
+    ElseIf IsButtonFingerUp() = true Then
+    	Call Alert("CheckAndDoMissionAction", "手指向上动作按钮")
+        Call DelayMid()
+        Touch 870, 390, 100
+        Delay 4000
+        Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        CheckAndDoMissionAction = True
+    ElseIf IsBoxWithActionButton() = True Then
+    	Call Alert("CheckAndDoMissionAction", "有框动作按钮")
+    	Call DelayMid()
+    	Touch 860, 400, 100
+    	Call DelayLong()
+    	Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        CheckAndDoMissionAction = True
+    ElseIf IsSubmitItem() = True Then
+    	Call Alert("CheckAndDoMissionAction", "交付物品页面")
+        Touch 1022, 615, 100
+    	Call DelayMid()
+    	If IsSubmitItem() = True Then 
+    		Call Alert("CheckAndDoMissionAction", "需要物品还没收集完整")
+    		Call DelayMin()
+    		Touch 871, 275, 100
+    		Call DelayMin()
+    		Touch 764, 159, 100
+    		Call DelayMin()
+    		Touch 760, 264, 100
+    	Else 
+    		Call Alert("CheckAndDoMissionAction", "任务交付成功")
+    		Touch touchMissionX, touchMissionY, 100
+        	Call DelayMin()
+    	End If
+    	Call DelayMin()
+        CheckAndDoMissionAction = True
+    ElseIf IsSubmitItemCheck() = True Then
+    	Call Alert("CheckAndDoMissionAction", "交付物品页面")
+    	Touch 1022, 615, 100 // click to open item location list
+    	Call DelayMin()
+    	Touch 549, 262, 100 // click on the first location of the list
+    	Call DelayLong()
+    	Call DelayLong()
+    	CheckAndDoMissionAction = True
+    ElseIf IsBuyScreen() = True Then
+    	Touch 580, 485, 100 // click on quantity box
+    	Call DelayMin()
+    	Call BuyQtyPress(2) // click number 2
+    	Call DelayMin()
+    	Call BuyQtyPress(0) // click number 0
+    	Call DelayMin()
+    	Call BuyQtyPress("yes") // click confirm
+    	Call DelayMin()
+    	Touch 600, 600, 100 // click buy
+    	Call DelayMin()
+    	Touch 1215, 60, 100 // exit from shop
+    	Call DelayMid()
+    	Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        CheckAndDoMissionAction = True
+    ElseIf IsCommercialBuyScreen() = True Then
+    	Touch 1116, 498, 100 // click on quantity box
+    	Call DelayMin()
+    	Call BuyQtyPressCommercial(1) // click number 2
+    	Call DelayMin()
+    	Call BuyQtyPressCommercial(5) // click number 0
+    	Call DelayMin()
+    	Call BuyQtyPressCommercial("yes") // click confirm
+    	Call DelayMin()
+    	Touch 1042,622, 100 // click buy
+    	Call DelayMin()
+    	Touch 1175,47, 100 // exit from shop
+    	Call DelayMid()
+    	Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMin()
+        CheckAndDoMissionAction = True
+    ElseIf IsNoteScreeen() = True Then
+    	Call Alert("CheckAndDoMissionAction", "关闭笔记页面")
+    	Touch 877, 71, 100 // close mini map
+    	Call DelayMin()
+    	CheckAndDoMissionAction = True
+    ElseIf IsCamera() = True Then
+    	Call Alert("CheckAndDoMissionAction", "拍照")
+    	Touch 1150, 616, 100 // take photo
+    	Call DelayLong()
+    	CheckAndDoMissionAction = True
+    ElseIf IsPhoto() = True Then
+    	Call Alert("CheckAndDoMissionAction", "照片")
+    	Touch 1027, 139, 100 // exit photo
+    	Call DelayMid()
+    	Touch 51, 37, 100 // exit camera
+    	Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayMid()
+    	CheckAndDoMissionAction = True
+    ElseIf IsMiniMapOpened() = True Then
+    	Call Alert("CheckAndDoMissionAction", "关闭小地图")
+    	Touch 1243, 85, 100 // close mini map
+    	Call DelayMin()
+    	CheckAndDoMissionAction = True
+    ElseIf IsDead() = True Then
+        Call Alert("CheckAndDoMissionAction", "死掉了")
+        Call DelayMin()
+        Touch 1071, 641, 100
+        Call DelayLong()
+        Call DelayLong()
+        CheckAndDoMissionAction = True
+    ElseIf IsHunting() = True Then
+    	Dim stringHuntingDelay = ReadUIConfig("狩猎停顿间隔")
+		Dim msHuntingDelay = 20000
+		
+		Dim messageArray(3)
+    	messageArray(0) = "狩猎动作，停顿间隔"
+    	messageArray(1) = stringHuntingDelay
+    	messageArray(2) = "毫秒"
+		
+    	If (IsNull(stringHuntingDelay) or stringHuntingDelay = "") Then
+        	msHuntingDelay = 20000
+    	Else 
+    		msHuntingDelay = CInt(stringHuntingDelay)
+    	End If
+	
+        Call Alert("CheckAndDoMissionAction: Hunting delay", Join(messageArray, ""))
+        Delay msHuntingDelay
+        
+        Call Alert("CheckAndDoMissionAction touch x", touchMissionX)
+        Delay 1000
+        Call Alert("CheckAndDoMissionAction touch x", touchMissionY)
+        Delay 1000
+    	Touch touchMissionX, touchMissionY, 100
+    	Delay 100
+    	
+    	If IsHunting() = False Then 
+    		Touch touchMissionX, touchMissionY, 100
+    		Delay 100
+    		If IsHunting() = False Then
+    			Touch touchMissionX, touchMissionY, 100
+    			Delay 100
+    		End If
+    	End If
+    	
+    	''Touch touchMissionX, touchMissionY, 100
+    	''Delay 500
+    	''Touch touchMissionX, touchMissionY, 100
+    	// Call CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
+        CheckAndDoMissionAction = True
+    ElseIf IsPathFinding() = True or IsLoading() = True  Then
+        Call Alert("CheckAndDoMissionAction", "寻路/加载 中")
+        Call DelayMin()
+        Call Alert("CheckAndDoMissionAction", "点击任务框")
+        Touch touchMissionX, touchMissionY, 100
+        Call DelayLong()
+        Call DelayLong()
+        CheckAndDoMissionAction = True
+    Else 
+        //Call Alert("CheckAndDoMissionAction", "没检测到在进行任何动作，重试")
+        //Call Alert("CheckAndDoMissionAction", "点击任务框")
+        //Touch touchMissionX, touchMissionY, 100
+        CheckAndDoMissionAction = False
+    End If
+End Function
+
+Function IsPathFinding
+    Dim p1 = GetPixelColor(590, 232)
+    Dim p2 = GetPixelColor(610, 232)
+    Dim p3 = GetPixelColor(601, 221)
+    Dim p4 = GetPixelColor(602, 242)
+    Dim p5 = GetPixelColor(1130,10)
+	
+    // FFFEE9, FFFFEC, FFFFF4, FEFEF6
+    If (Left(CStr(p1), 1) = "F" and Left(CStr(p2), 1) = "F" and Left(CStr(p3), 1) = "F" and Left(CStr(p4), 1) = "F"  and Left(CStr(p5), 6) = "FFFFFF") Then 
+    	Call Alert("IsPathFinding", "寻路中")
+        IsPathFinding = True
+    Else 
+        IsPathFinding = False
+    End If
+End Function
+
+Function IsHunting
+    //hunting
+    // auto battle icon
+    //Dim h1 = GetPixelColor(807, 532) //knife head at the left
+    //Dim h2 = GetPixelColor(836, 531) //knife head at the right
+    //Dim h3 = GetPixelColor(815, 551) //knife bottom at the left
+    //Dim h4 = GetPixelColor(827, 549) //knife bottom at the right
+    //Dim h5 = GetPixelColor(821, 541) //auto fight button middle
+	
+    //FBFBFA, FDFDF5
+    // h3 = "FFBB55" And h4 = "F4B039"
+    // Left(CStr(h3), 1) = "F" And Left(CStr(h4), 1) = "F" And h3 <> "FFFFFF" And h4 <> "FFFFFF"
+    //If (Left(CStr(h1), 1) = "F" And Left(CStr(h2), 1) = "F" And h5 <> "FFFFFF") Then 
+    //If CmpColorEx("807|532|FDFDF5,836|531|FCFCF5,821|541|F7A73C",0.9) = 1 Then
+    If CmpColorEx("828|537|FF9D4D,833|556|FFAB67,810|533|F49F4B,824|564|FFFFFF",0.9) = 1 Then
+        Call Alert("IsHunting", "打猎中")
+        IsHunting = True
+    Else 
+    	IsHunting = False
+    End If
+End Function
+
+Function IsSkipChat
+    //skipchat
+    //Dim skipChatX,skipChatY
+    //FindMultiColor 0, 0, 0, 0, "EBE5E7", "1009|-6|EBE5E7-AAAAAA,1002|-594|FFFFFF", 0, 0.9, skipChatX, skipChatY
+    Dim sc1 = GetPixelColor(77, 632) // dialog box left
+    Dim sc2 = GetPixelColor(1203, 626) // dialog box right
+    Dim sc3 = GetPixelColor(657, 702) // dialog box bottom
+    Dim sc4 = GetPixelColor(647, 557) // dialog box top
+    Dim sc5 = GetPixelColor(1130, 41) // skip button "pipe" symbol
+    Dim sc6 = GetPixelColor(1115, 41) // skip button "play" symbol
+    Dim sc7 = GetPixelColor(1259, 209) // mini map bottom right
+    Dim sc8 = GetPixelColor(1259, 199) // mini map bottom right "+" symbol
+    Dim sc9 = GetPixelColor(1234, 266) // right middle menu button
+	
+    //If (sc1 = "E3D5DB" And sc2 = "E3D5DB" And sc3 = "E7CAD8" And sc4 ="E4DFDF" And sc5 = "FFFFFF" And sc6 = "FFFFFF") Then
+        //And sc7 <> "EEEEEE" And sc8 <> "837E83" And sc9 <> "E78F5D") Then
+    If CmpColorEx("1118|38|FFFFFF,1130|37|FFFFFF,1157|33|FFFFFF,1174|36|FFFFFF,1214|31|FFFFFF",0.95) = 1 Then
+        Call Alert("IsSkipChat", "对话中")
+        IsSkipChat = True
+    Else 
+        IsSkipChat = False
+    End If
+End Function
+
+Function IsButtonCheck
+    //buttoncheck
+    // 4 pixel in the word of 查看 button
+    //Dim bc1 = GetPixelColor(856, 296) // top of 查
+    //Dim bc2 = GetPixelColor(876, 297) // bottom of 查
+    //Dim bc3 = GetPixelColor(877, 297) // top of 看
+    //Dim bc4 = GetPixelColor(883, 310) // bottom of 看
+	
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonCheck", "查看按钮")
+    //    IsButtonCheck = True
+    //Else 
+    //    IsButtonCheck = False
+    //End If
+    
+    If CmpColorEx("856|296|FFFFFF,876|297|FFFFFF,877|297|FFFFFF,883|310|FEFEFE",0.95) = 1 Then
+		Call Alert("IsButtonCheck", "查看按钮")
+        IsButtonCheck = True
+	Else
+		IsButtonCheck = False
+	End If
+    
+End Function
+
+Function IsButtonCollect
+    //buttoncheck
+    // 4 pixel in the word of 采集 button
+    //Dim bc1 = GetPixelColor(856, 297) // top of 采
+    //Dim bc2 = GetPixelColor(856, 312) // bottom of 采
+    //Dim bc3 = GetPixelColor(877, 297) // top of 集
+    //Dim bc4 = GetPixelColor(877, 312) // bottom of 集
+	
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonCollect", "采集按钮")
+    //    IsButtonCollect = True
+    //Else 
+    //    IsButtonCollect = False
+    //End If
+    
+    If CmpColorEx("856|297|FFFFFF,856|312|FFFFFF,877|297|FFFFFF,877|312|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonCollect", "采集按钮")
+        IsButtonCollect = True
+	Else
+		IsButtonCollect = False
+	End If
+End Function
+
+Function IsButtonPick
+    //buttoncheck
+    // 4 pixel in the word of 采花 button
+    //Dim bc1 = GetPixelColor(856, 297) // top of 采
+    //Dim bc2 = GetPixelColor(856, 312) // bottom of 采
+    //Dim bc3 = GetPixelColor(880, 297) // top of 花
+    ///Dim bc4 = GetPixelColor(878, 312) // bottom of 花
+	
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonPick", "采花按钮")
+    //    IsButtonPick = True
+    //Else 
+    //    IsButtonPick = False
+    //End If
+    
+    If CmpColorEx("856|297|FFFFFF,856|312|FFFFFF,880|297|FFFFFF,878|312|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonPick", "采花按钮")
+        IsButtonPick = True
+	Else
+		IsButtonPick = False
+	End If
+End Function
+
+Function IsButtonFind
+    If CmpColorEx("855|296|FFFFFF,859|312|FFFFFF,878|296|FFFFFF,871|312|FFFFFF", 0.95) = 1 Then
+		Call Alert("IsButtonPick", "寻找按钮")
+        IsButtonFind = True
+	Else
+		IsButtonFind = False
+	End If
+End Function
+
+Function IsButtonCatch
+    //buttoncheck
+    // 4 pixel in the word of 捕抓 button
+    //Dim bc1 = GetPixelColor(859, 297) // top of 捕
+    //Dim bc2 = GetPixelColor(859, 312) // bottom of 捕
+    //Dim bc3 = GetPixelColor(880, 297) // top of 抓 
+    //Dim bc4 = GetPixelColor(880, 311) // bottom of 抓 
+	
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonCheck", "捕抓按钮")
+    //    IsButtonCatch = True
+    //Else 
+    //    IsButtonCatch = False
+    //End If
+    
+    If CmpColorEx("859|297|FFFFFF,859|312|FFFFFF,880|297|FFFFFF,880|311|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonCheck", "捕抓按钮")
+        IsButtonCatch = True
+	Else
+		IsButtonCatch = False
+	End If
+End Function
+
+Function IsButtonAppease
+    //buttoncheck
+    // 4 pixel in the word of 安抚 button
+    //Dim bc1 = GetPixelColor(856, 297) // top of 安
+    //Dim bc2 = GetPixelColor(860, 310) // bottom of 安
+    //Dim bc3 = GetPixelColor(879, 297) // top of 抚 
+    //Dim bc4 = GetPixelColor(885, 309) // bottom of 抚 
+	
+    //If (bc1 = "FFFFFF" And bc2 = "FFFFFF" And bc3 = "FFFFFF" And bc4 = "FFFFFF") Then 
+    //	Call Alert("IsButtonAppease", "安抚按钮")
+    //    IsButtonAppease = True
+    //Else 
+    //    IsButtonAppease = False
+    //End If
+    
+    If CmpColorEx("856|297|FFFFFF,860|310|FFFFFF,879|297|FFFFFF,885|309|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonAppease", "安抚按钮")
+        IsButtonAppease = True
+	Else
+		IsButtonAppease = False
+	End If
+End Function
+
+Function IsButtonFishing
+    If CmpColorEx("782|317|FFFFFF,782|325|FFFFFF,809|316|FFFFFF,808|328|FFFFFF", 0.95) = 1 Then
+		Call Alert("IsButtonAppease", "钓鱼按钮")
+        IsButtonFishing = True
+	Else
+		IsButtonFishing = False
+	End If
+End Function
+
+Function IsButtonCai
+    If CmpColorEx("856|297|FFFFFF,856|312|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonCai", "采X按钮")
+        IsButtonCai = True
+	Else
+		IsButtonCai = False
+	End If
+End Function
+
+Function IsButtonCha
+    If CmpColorEx("856|296|FFFFFF,861|309|FFFFFF,856|309|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonCai", "查X按钮")
+        IsButtonCha = True
+	Else
+		IsButtonCha = False
+	End If
+End Function
+
+
+Function IsButtonFingerUp
+    If CmpColorEx("859|388|F4FCFF,887|381|F0FFFF,876|411|F4FFFF",0.95) = 1 Then
+		Call Alert("IsButtonFingerUp", "手指向上按钮")
+        IsButtonFingerUp = True
+	Else
+		IsButtonFingerUp = False
+	End If
+End Function
+
+Function IsButtonInvestigate
+    If CmpColorEx("859|297|FFFFFF,859|305|FFFFFF,877|303|FFFFFF",0.95) = 1 Then
+		Call Alert("IsButtonInvestigate", "调查按钮")
+        IsButtonInvestigate = True
+	Else
+		IsButtonInvestigate = False
+	End If
+End Function
+
+Function IsButtonUnknown
+    If CmpColorEx("846|247|B5EBF6,864|287|F9F9FF,880|283|EEF7FB",0.95) = 1 Then
+		Call Alert("IsButtonUnknown", "未知按钮")
+        IsButtonUnknown = True
+	Else
+		IsButtonUnknown = False
+	End If
+End Function
+
+Function IsBoxWithActionButton
+    If CmpColorEx("942|267|FFFFFF,946|258|FFFFFF,930|258|FFFFFF,814|404|F1D0AF,918|403|E29B81",0.95) = 1 Then
+		Call Alert("IsBoxWithActionButton", "有框动作按钮")
+        IsBoxWithActionButton = True
+	Else
+		IsBoxWithActionButton = False
+	End If
+End Function
+
+Function IsDialogFirstButton
+    Dim fb1 = GetPixelColor(77, 632) // dialog box left
+    Dim fb2 = GetPixelColor(1203, 626) // dialog box right
+    Dim fb3 = GetPixelColor(657, 702) // dialog box bottom
+    Dim fb4 = GetPixelColor(647, 557) // dialog box top
+    Dim b1 = GetPixelColor(1230,505) //button right
+    Dim b2 = GetPixelColor(987,505) //button left
+	
+    //If (fb1 = "E3D5DB" And fb2 = "E3D5DB" And fb3 = "E7CAD8" And fb4 = "E4DFDF" And b1 = "9FF0CE" And b2 = "9EF0D1") Then 
+    If CmpColorEx("77|632|E3D5DB,1203|626|E3D5DB,657|702|E7CAD8,647|557|E4DFDF,1230|505|9FF0CE,987|505|9EF0D1",0.95) = 1 or CmpColorEx("77|632|E3D5DB,1203|626|E3D5DB,657|702|E7CAD8,647|557|E4DFDF,1230|505|A4E6F6,987|505|A2E4F4", 0.95) = 1 Then
+    	Call Alert("IsDialogFirstButton", "对话中，需要选第一个按钮")
+        IsDialogFirstButton = True
+    Else 
+        IsDialogFirstButton = False
+    End If
+End Function
+
+Function IsDialogSecondButton
+    If CmpColorEx("77|632|E3D5DB,1203|626|E3D5DB,657|702|E7CAD8,647|557|E4DFDF,1230|434|C5EEDA,1000|435|A7F5DE",0.95) = 1 Then
+    	Call Alert("IsDialogSecondButton", "对话中，需要选第一个按钮")
+        IsDialogSecondButton = True
+    Else 
+        IsDialogSecondButton = False
+    End If
+End Function
+
+Function IsDialogThirdButton
+    Dim fb1 = GetPixelColor(77, 632) // dialog box left
+    Dim fb2 = GetPixelColor(1203, 626) // dialog box right
+    Dim fb3 = GetPixelColor(657, 702) // dialog box bottom
+    Dim fb4 = GetPixelColor(647, 557) // dialog box top
+    Dim b1 = GetPixelColor(1230,365) //button right
+    Dim b2 = GetPixelColor(1000,365) //button left
+	
+    //If (fb1 = "E3D5DB" And fb2 = "E3D5DB" And fb3 = "E7CAD8" And fb4 = "E4DFDF" And b1 = "C9EEDB" And b2 = "B2FCE5") Then 
+    If CmpColorEx("77|632|E3D5DB,1203|626|E3D5DB,657|702|E7CAD8,647|557|E4DFDF,1230|365|C9EEDB,1000|365|B2FCE5",0.95) = 1 or CmpColorEx("77|632|E3D5DB,1203|626|E3D5DB,657|702|E7CAD8,647|557|E4DFDF,1230|365|BCEEFE,1000|365|C1F0FF", 0.95) = 1 Then
+    	Call Alert("IsDialogThirdButton", "对话中，需要选第三个按钮")
+        IsDialogThirdButton = True
+    Else 
+        IsDialogThirdButton = False
+    End If
+End Function
+
+Function IsDialogForthButton
+    Dim fb1 = GetPixelColor(77, 632) // dialog box left
+    Dim fb2 = GetPixelColor(1203, 626) // dialog box right
+    Dim fb3 = GetPixelColor(657, 702) // dialog box bottom
+    Dim fb4 = GetPixelColor(647, 557) // dialog box top
+    Dim b1 = GetPixelColor(1230,300) //button right
+    Dim b2 = GetPixelColor(1000,300) //button left
+	
+    //If (fb1 = "E3D5DB" And fb2 = "E3D5DB" And fb3 = "E7CAD8" And fb4 = "E4DFDF" And b1 = "AAF1D6" And b2 = "A1F1D1") Then 
+    If CmpColorEx("77|632|E3D5DB,1203|626|E3D5DB,657|702|E7CAD8,647|557|E4DFDF,1230|300|AAF1D6,1000|300|A0F1D1",0.95) = 1 Then
+    	Call Alert("IsDialogForthButton", "对话中，需要选第四个按钮")
+        IsDialogForthButton = True
+    Else 
+        IsDialogForthButton = False
+    End If
+End Function
+
+Function IsSubmitItem
+    // submit window check
+    // skip checking for p2, as when there is announcement it will block the pixel
+    Dim p1 = GetPixelColor(937, 186) // item name background left bottom
+    Dim p2 = GetPixelColor(938, 137) // item name background left top
+    Dim p3 = GetPixelColor(1194, 137) // item name background right top
+    Dim p4 = GetPixelColor(1190, 186) // item name background right bottom
+    Dim p5 = GetPixelColor(1022, 615) // submit button
+	
+    // p2 = "BAD9CE" And 
+   	// p5 = CB8365 is CommercialMission "交付"
+   	// p5 = E09E7C is BoardMission
+    //If (p1 = "B6D6D4" And p3 = "BAD9CE" And p4 = "B6D6D4" And (p5 = "E19E7B" or p5 = "CC8365")) Then 
+    //	Call Alert("IsSubmitItem", "需要提交物品")
+    //    IsSubmitItem = True
+    //Else 
+    //    IsSubmitItem = False
+    //End If
+    
+    If (CmpColorEx("937|186|B4D6D5,1194|137|B9DBCA,1190|186|B4D6D5,1022|615|E09E7C", 0.95) = 1) or (CmpColorEx("937|186|B4D6D5,1194|137|B9DBCA,1190|186|B4D6D5,1022|615|CB8365", 0.95) = 1) Then
+    	Call Alert("IsSubmitItem", "需要提交物品")
+        IsSubmitItem = True
+	Else
+		IsSubmitItem = False
+	End If
+End Function
+
+Function IsSubmitItemCheck
+    // submit window check
+    // skip checking for p2, as when there is announcement it will block the pixel
+    Dim p1 = GetPixelColor(937, 186) // item name background left bottom
+    Dim p2 = GetPixelColor(938, 137) // item name background left top
+    Dim p3 = GetPixelColor(1194, 137) // item name background right top
+    Dim p4 = GetPixelColor(1190, 186) // item name background right bottom
+    Dim p5 = GetPixelColor(1022, 615) // check item location button
+	
+    // p2 = "BAD9CE" And 
+    // If (p1 = "B6D6D4" And p3 = "BAD9CE" And p4 = "B6D6D4" And p5 = "5795D4") Then 
+    If CmpColorEx("937|186|B4D6D5,1194|137|B9DBCA,1190|186|B4D6D5,1022|615|5796D4",0.95) = 1 Then
+    	Call Alert("IsSubmitItemCheck", "提交物品页面，查看来源")
+        IsSubmitItemCheck = True
+    Else 
+        IsSubmitItemCheck = False
+    End If
+End Function
+
+Function IsLoading
+    // loading bar pixel
+    //Dim p1 =  GetPixelColor(33, 663) //loading bar left
+    //Dim p2 =  GetPixelColor(29, 670) //loading bar left
+    //Dim p3 =  GetPixelColor(39, 668) //loading bar left
+	
+    //If (p1 = "F7E3C6" And p2 = "DE8C1C" And p3 = "E08C16") Then 
+    //	Call Alert("IsLoading", "加载中")
+    //    IsLoading = True
+    //Else 
+    //    IsLoading = False
+    //End If
+    
+    If CmpColorEx("33|663|F7E3C6,29|670|DE8C1C,39|668|E08C16", 0.9) = 1 Then
+		Call Alert("IsLoading", "加载中")
+        IsLoading = True
+	Else
+		IsLoading = False
+	End If
+End Function
+
+Function IsDead
+    // Revive box
+    //Dim p1 =  GetPixelColor(958,561) //text background pixel top left
+    //Dim p2 =  GetPixelColor(956,594) //text background pixel bottom left
+    //Dim p3 =  GetPixelColor(1221,561) //text background pixel top right
+    //Dim p4 =  GetPixelColor(1216,594) //text background pixel bottom left
+    //Dim p5 =  GetPixelColor(1071,641) //revive button middle
+	
+    //If (p1 = "A66A58" And p2 = "B98664" And p3 = "B67C63" And p4 = "C5A473" And p5 = "E09E7D") Then 
+    //	Call Alert("IsDead", "死亡")
+    //    IsDead = True
+    //Else 
+    //    IsDead = False
+    //End If
+    If CmpColorEx("1060|642|FFFFFF,1083|635|FFFFFF,1087|643|FFFFFF",0.9) = 1 Then
+		Call Alert("IsDead", "死亡")
+        IsDead = True
+	Else
+        IsDead = False
+	End If
+End Function
+
+Function IsCommercialDialog
+    //Dim p1 = GetPixelColor(265,418) // dialog npc necktile, color not fixed
+    //Dim p2 = GetPixelColor(95,581) // dialog top left
+    //Dim p3 = GetPixelColor(99,682) // dialog bottom left
+    //Dim p4 = GetPixelColor(1183,580) // dialog top right
+    //Dim p5 = GetPixelColor(1192,670) // dialog bottom right
+    //Dim p6 = GetPixelColor(1108,507) // dialog first button
+    
+    //Dim w1 = GetPixelColor(214,545) // dialog npc name first word
+    //Dim w2 = GetPixelColor(239,545) // dialog npc name second word
+    //Dim w3 = GetPixelColor(267,539) // dialog npc name third word
+    //Dim w4 = GetPixelColor(290,555) // dialog npc name forth word
+    
+	//p1 = "3B3A3A" And 
+    //If (p2 = "E5DCDC" And p3 = "E7CED8" And p4 = "E3DBDE" And p5 = "E4CDD8" And p6 = "F9C9A1" And w1 = "FFFFFF" And w2 = "FFFFFF" And w3 = "FFFFFF" And w4 = "FFFFFF") Then 
+    //	Call Alert("IsCommercialDialog", "正在与商会NPC对话")
+    //    TracePrint("IsCommercialDialog True")
+    //    IsCommercialDialog = true
+    //Else 
+    //    TracePrint("IsCommercialDialog False")
+    //    IsCommercialDialog = false
+    //End If
+    //,290|555|FFFFFF
+    If CmpColorEx("989|421|FFFFFF,989|489|FFFFFF,1215|437|FCCBA5,1217|510|FAC9A0,222|556|FFFFFF", 0.9) = 1 Then 
+    	TracePrint("IsCommercialDialog True")
+		IsCommercialDialog = True
+	Else
+		IsCommercialDialog = False
+	End If
+End Function
+
+Function IsBuyScreen
+    // selected item and quantity box
+    Dim p1 =  GetPixelColor(436,606) //cancel button
+    Dim p2 =  GetPixelColor(597,615) //buy button
+    Dim p3 =  GetPixelColor(469,458) //minus button
+    Dim p4 =  GetPixelColor(633,458) //plus button
+    //Dim p3 =  GetPixelColor(466,498) //zeny left eyes
+    //Dim p4 =  GetPixelColor(471,498) //zeny right eyes
+    Dim p5 =  GetPixelColor(530,530) //random place, bottom of total price
+	
+	// p3 = "6FD3FB" And p4 = "7AAEE7"
+    // If (p1 = "5DA1DF" And p2 = "E7AD6F" And p3 = "AFABA7" And p4 = "BB9999" And p5 = "E4DBD4") Then 
+    // If CmpColorEx("436|606|5FA2DF,597|615|E7AD70,469|458|AFAAA7,633|458|BB9999,530|530|E4DBD4",0.95) = 1 Then
+    If CmpColorEx("436|606|F7F9FC,597|615|FEFDFD,469|458|D9D2CE,633|458|D9D2CE,530|530|716E79",0.9) = 1 Then
+    	Call Alert("IsBuyScreen", "购买页面")
+        IsBuyScreen = True
+    Else 
+        IsBuyScreen = False
+    End If
+End Function
+
+Function IsCommercialBuyScreen
+	If CmpColorEx("928|497|7DCDAE,1015|501|7DCDAE,928|544|AEA1EF,1013|542|AEA1EF",0.9) = 1 Then
+		Call Alert("IsCommercialBuyScreen", "商会购买页面")
+        IsCommercialBuyScreen = True
+	Else
+		IsCommercialBuyScreen = False
+	End If
+End Function
+
+Function IsTradeCentre
+	If CmpColorEx("75|130|EFB57D,1240|110|716E79,1260|700|BDB0B2,20|700|BBB7B6", 0.9) = 1 Then 
+		Call Alert("IsTradeCentre", "交易行画面")
+		IsTradeCentre = True
+	Else
+		IsTradeCentre = False
+	End If
+End Function
+
+Function IsGuildMissionLocked
+	If CmpColorEx("160|160|4D5E65,340|180|656A6D,330|390|5E656B",0.9) = 1 Then
+		Call Alert("IsGuildMissionLocked", "IsGuildMissionLocked")
+        IsGuildMissionLocked = True
+	Else
+		IsGuildMissionLocked = False
+	End If
+End Function
+
+Function IsGuildMission
+	If CmpColorEx("985|86|4D2E2C,1246|83|4D2E30,1001|665|6C443D,1232|680|744B43,48|172|643733", 0.9) = 1 Then 
+		Call Alert("IsGuildMission", "工会任务页面")
+		IsGuildMission = True
+	Else
+		IsGuildMission = False
+	End If
+End Function
+
+// not using
+Function IsGuildMissionDo
+	//If CmpColorEx("160|160|ADD2E3,340|180|E3ECF4,330|390|D2E1EF", 0.9) = 1 Then 
+	//If CmpColorEx("50|170|623830,50|340|825851,170|340|724541",0.9) = 1 Then
+	//	Call Alert("IsGuildMissionDo", "检测到工会任务")
+    //    IsGuildMissionDo = True
+	//Else
+	//	IsGuildMissionDo = False
+	//End If
+	
+	Dim count = 1
+	Dim selected = False
+	
+	Do While count < 10 and selected = False
+		//selected = SubmitGuildMission(count)
+		count = count + 1
+		TracePrint(selected)
+		DelayMin()
+	Loop
+	
+	IsGuildMissionDo = selected
+End Function
+
+Function SubmitGuildMission
+	Dim textArray(2)
+    textArray(0) = "检查工会任务"
+    Dim colorString = ""
+    Dim x, y
+    Dim count = 1
+	Dim selected = False
+    
+    Do While count < 10 and selected = False
+    	textArray(1) = count
+    	Select Case count
+        	Case 1
+        		x = 159
+        		y = 230
+        		colorString = "149|230|E8E0D9"
+        	Case 2
+        		x = 352
+        		y = 230
+        		colorString = "332|230|E7DFD8"
+        	Case 3
+        		x = 536
+        		y = 230
+        		colorString = "516|230|E9E1DA"
+        	Case 4
+        		x = 719
+        		y = 230
+        		colorString = "699|230|E8E0D8"
+        	Case 5
+        		x = 902
+        		y = 230
+        		colorString = "882|230|E7DFD7"
+        	Case 6
+        		x = 169
+        		y = 490
+        		colorString = "149|490|E8E0D9"
+        	Case 7
+        		x = 352
+        		y = 490
+        		colorString = "332|490|E7DFD7"
+        	Case 8
+        		x = 536
+        		y = 490
+        		colorString = "516|490|E9E1D9"
+        	Case 9
+        		x = 719
+        		y = 490
+        		colorString = "699|490|E8E0D8"
+        	Case 10
+        		x = 902
+        		y = 490
+        		colorString = "882|490|E7DFD7"
+    	End Select
+    	
+    	Call Alert("SelectGuildMission", Join(textArray, ""))
+    	
+		If CmpColorEx(colorString, 0.8) = 1 Then 
+			//touch mission
+			Touch x, y, 100
+			DelayMin()
+			//touch submit button
+    		Touch 1111, 570, 100
+   			DelayMin()
+			//touch submit button
+    		//Touch 1111, 570, 100
+    		If CmpColorEx(colorString, 0.8) = 1 Then 
+     			selected = True
+    		Else 
+    			selected = False
+    		End If
+		Else
+			selected = False
+		End If
+		count = count + 1
+		TracePrint(selected)
+		DelayMin()
+	Loop
+	
+	SubmitGuildMission = selected
+End Function
+
+Function IsDisconnected
+	If CmpColorEx("632|219|FFFFFF,413|225|D5CDC5,867|231|CCBBBB,412|487|E0DEE0,857|478|E7E4E3,637|471|FFFFFF",0.95) = 1 Then
+		Call Alert("IsDisconnected", "断线了")
+        IsDisconnected = True
+	Else
+		IsDisconnected = False
+	End If
+End Function
+
+Function IsMiniMapOpened
+	If CmpColorEx("570|99|FFFFFF,1242|75|866BDF,1196|536|EECD8B,815|579|66CCFF",0.95) = 1 Then
+		Call Alert("IsMiniMapOpened", "卡在小地图")
+        IsMiniMapOpened = True
+	Else
+		IsMiniMapOpened = False
+	End If
+End Function
+
+Function IsNoteScreeen
+	If CmpColorEx("877|71|FFFFFF,898|28|C7BFFF,444|89|98A4AE,818|615|A6AAB2",0.9) = 1 Then
+		Call Alert("IsNoteScreeen", "笔记页面")
+        IsNoteScreeen = True
+	Else
+		IsNoteScreeen = False
+	End If
+End Function
+
+Function IsCamera
+	If CmpColorEx("1007|667|FFFFFF,1044|664|9371F9,1150|616|FFF6FF,1212|628|AA77FF",0.9) = 1 Then
+		Call Alert("IsCamera", "相机页面")
+        IsCamera = True
+	Else
+		IsCamera = False
+	End If
+End Function
+
+Function IsPhoto
+	If CmpColorEx("220|351|FFFFFF,1027|139|FFFFFF,1048|96|C7BFFF,301|136|EBF5F7",0.9) = 1 Then
+		Call Alert("IsPhoto", "照片页面")
+        IsPhoto = True
+	Else
+		IsPhoto = False
+	End If
+End Function
+
+Function IsNotChinese
+	//check if mission tab is active
+	If CmpColorEx("33|276|FFFFFF,22|276|FFFFFF", 0.95) <> 1 Then 
+		Touch 33, 276, 100
+		Call DelayMin()
+	End If
+	
+	If CmpColorEx("33|276|FFFFFF,22|276|FFFFFF", 0.95) <> 1 Then 
+		Call Alert("IsNotChinese", "语言检测不到")
+		IsNotChinese = False
+	End If
+
+	If CmpColorEx("21|224|464649,19|249|454545,35|224|3E3948",0.9) <> 1 Then
+		Call Alert("IsNotChinese", "不是中文")
+        IsNotChinese = True
+	Else
+		IsNotChinese = False
+	End If
+End Function
+	
+/**************************************************************************
+任务区域-结束
+**************************************************************************/
+
+/**************************************************************************
+副本区域-开始
+**************************************************************************/
+Sub Instancing()
+	Dim InstanceTypeId = CInt(ReadUIConfig("副本种类"))
+	Dim InstanceThread
+	
+	If (InstanceTypeId = 1) Then 
+		Call Alert("Instancing", "海盗船长室")
+		Call DelayMin()
+		InstanceThread = Thread.Start(DoInstancePirate)
+	End If
+	
+	Call DoInstance()
+End Sub
+
+Sub DoInstancePirate()
+	Dim FinsStartX,FindStartY,FindEndX,FindEndY
+	Dim Interval = ReadUIConfig("副本停顿")
+    Rem action
+    Delay Interval
+    
+    // check if stuck at mini map
+    If IsMiniMapOpened() = True Then
+    	//Call Alert("CheckAndDoMissionAction", "关闭小地图")
+    	Touch 1243, 85, 100 // close mini map
+    	Call DelayMin()
+    End If
+    
+    //Call Alert("DoInstancePirate", "开地图")
+    //Call DelayMid()
+    //check can open map
+    If CmpColorEx("1039|183|FFFFFF,1210|19|FFFFFF,1259|199|7C7B84", 0.95) = 1 Then 
+    	//Call Alert("DoInstancePirate", "开地图中")
+    	//Call DelayMid()
+    	
+    	//check menu page
+		If CmpColorEx("1218|266|FFFFFF,1247|266|E8996D",0.95) = 1 Then
+			//switch to atk menu
+			Touch 1230, 265, 100
+			Call DelayMin()
+		End If
+		Touch 1119,561,200
+		Delay 1000
+		Touch 1111, 80, 200
+		Delay 2000
+	Else 
+		//Call Alert("DoInstancePirate", "不能开地图")
+    	//Call DelayMid()
+    	Delay 5000
+		Goto action
+	End If
+    
+    //Call Alert("DoInstancePirate", "开地图后")
+    Call DelayMid()
+    
+    //1st Step 840,252,893,307
+    FinsStartX = 840
+    FindStartY = 252
+    FindEndX = 893
+    FindEndY = 307
+    
+    If InsFindStep(FinsStartX,FindStartY,FindEndX,FindEndY) = True Then 
+    	Touch 920, 280, 200
+    	Delay 1000
+    	Call InsAutoAtk()
+    	Goto action
+    End If
+    
+    //2nd Step 894,250,947,305
+    FinsStartX = 894
+    FindStartY = 250
+    FindEndX = 947
+    FindEndY = 305
+    
+    If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
+    	Touch 935, 340, 200
+    	Delay 1000
+    	Call InsAutoAtk()
+    	Goto action
+    End If
+    
+    //3rd Step 897,306,944,389
+    FinsStartX = 897
+    FindStartY = 306
+    FindEndX = 944
+    FindEndY = 389
+    
+    If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
+    	Touch 975, 335, 200
+    	Delay 1000
+    	Call InsAutoAtk()
+    	Goto action
+    End If
+    
+    //4th Step 944,308,997,361
+    FinsStartX = 944
+    FindStartY = 308
+    FindEndX = 997
+    FindEndY = 361
+    
+    If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
+    	Touch 1030,340,200
+    	Delay 1000
+    	Call InsAutoAtk()
+    	Goto action
+    End If
+    
+    //4th Step 888,367,986,397
+    FinsStartX = 888
+    FindStartY = 367
+    FindEndX = 986
+    FindEndY = 397
+    
+    If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
+    	Touch 1030,340,200
+    	Delay 1000
+    	Call InsAutoAtk()
+    	Goto action
+    End If
+    
+    //Boss Step 997,275,1106,397
+    FinsStartX = 997
+    FindStartY = 275
+    FindEndX = 1106
+    FindEndY = 397
+    
+    If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
+    	Touch 1243, 85, 100 // close mini map
+    	Delay 1000
+    	
+    	If IsInsNoAutoAtk() = True Then 
+    		Call InsAutoAtk()
+    	End If
+    	
+    	// try luck clicking on tresure box
+    	Delay 1000
+    	Touch 633,160,200
+    	Touch 695,164,200
+    	Touch 633,219,200
+    	Touch 698,226,200
+    	Touch 667,187,200
+
+		Touch 693,303,200
+		Touch 634,303,200
+		Touch 687,276,200
+		Touch 634,264,200
+		
+    	Goto action
+    End If
+    
+    Goto action	
+End Sub
+
+Sub DoInstance()
+	Dim FubenTime = ReadUIConfig("副本次数")
+    Dim FubenCount = 0
+    Dim messageArray(3)
+    messageArray(0) = "副本次数设为"
+	
+    If (IsNull(FubenTime) or FubenTime = "") Then
+        FubenTime = 0
+    Else 
+    	FubenTime = CInt(FubenTime)
+    End If
+	
+    messageArray(1) = FubenTime
+    messageArray(2) = "次"
+	
+    Call Alert("InstanceCommonAction", Join(messageArray, ""))
+    Call DelayMid()
+	
+	messageArray(0) = "开始副本，第"
+    messageArray(1) = FubenCount + 1
+    Call Alert("Fishing", Join(messageArray, ""))
+	
+    Rem action	
+	Delay 5000
+	
+	If IsInsDead() = True Then 
+		If ReadUIConfig("副本原地复活选框") = True Then 
+			Touch 988, 632, 200
+		ElseIf ReadUIConfig("副本普通复活选框") = True Then
+			Touch 1152, 631, 200
+		End If
+		
+		// click ride
+		Delay 1000
+		Touch 34, 661, 200
+	ElseIf IsInsSkip() = True Then
+		Touch 950, 42, 200
+		Touch 1000, 42, 200
+		Touch 1050, 42, 200
+		Touch 1100, 42, 200
+		Touch 1150, 42, 200
+	ElseIf IsInsReady() = True Then
+		If IsInsStart() = True or IsInsStartAgain() Then
+    		Touch 570,611,200
+    		Touch 570,611,200
+    	Else
+			Dim x1,y1,x2,y2
+			Dim count = 1
+			x1 = 798
+			y1 = 503
+			x2 = 819
+			y2 = 508
+			
+			Do While count < 5
+				Dim textArray(8)
+				textArray(0) = x1
+    			textArray(1) = "|"
+    			textArray(2) = y1
+    			textArray(3) = "|FFFFFF,"
+    			textArray(4) = x2
+    			textArray(5) = "|"
+    			textArray(6) = y2
+    			textArray(7) = "|FFFFFF"
+    			
+    			TracePrint(Join(textArray, ""))
+			
+        		If CmpColorEx(Join(textArray, ""),0.95) = 1 Then
+					Touch x1, y1, 200
+					Touch x1, y1, 200
+					Exit Do
+				End If
+            	y1 = y1 - 85
+            	y2 = y2 - 85
+            	count = count + 1
+    		Loop
+    	End If
+	ElseIf IsInsFinish() = True Then
+		Dim PlayerSlot = CInt(ReadUIConfig("点赞位置"))
+		
+		Select Case PlayerSlot
+			Case 0
+				Touch 43,194, 200
+				Touch 43,194, 200
+			Case 1
+				Touch 300,190, 200
+				Touch 300,190, 200
+			Case 2
+				Touch 552,197, 200
+				Touch 552,197, 200
+			Case 3
+				Touch 812,197, 200
+				Touch 812,197, 200
+			Case 4
+				Touch 1064,192, 200
+				Touch 1064,192, 200
+    	End Select
+    	
+    	If IsInsChallangeAgain() = True Then 
+    		Delay 10000
+    		
+    		If FubenCount <= FubenTime Or FubenTime = 0 Then 
+    			Touch 725, 686, 200
+    			Touch 725, 686, 200
+    			
+    			messageArray(1) = FubenCount + 1
+    			Call Alert("DoInstance", Join(messageArray, ""))
+    		Else 
+    			Call Alert("DoInstance", "副本自动完毕")
+    			Call DelayMin()
+    			ExitScript
+    		End If
+    	End If
+	End If
+	
+	Goto action
+End Sub
+
+Sub InsAutoAtk()
+	Touch 820,545,200
+	Delay 1500
+	Touch 936,358,200
+End Sub
+
+Function InsFindStep(StartX,StartY,EndX,EndY)
+	Dim intX,intY
+	Dim Similarity = 0.9
+	
+	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","0|1|5AEFFF",0,Similarity,intX,intY
+	If intX > -1 And intY > -1 Then
+		InsFindStep = True
+		Exit Function
+	End If
+	
+	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","1|0|5AEFFF",0,Similarity,intX,intY
+	If intX > -1 And intY > -1 Then
+		InsFindStep = True
+		Exit Function
+	End If
+	
+	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","1|1|5AEFFF",0,Similarity,intX,intY
+	If intX > -1 And intY > -1 Then
+		InsFindStep = True
+		Exit Function
+	End If
+	
+	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","0|-1|5AEFFF",0,Similarity,intX,intY
+	If intX > -1 And intY > -1 Then
+		InsFindStep = True
+		Exit Function
+	End If
+	
+	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","-1|0|5AEFFF",0,Similarity,intX,intY
+	If intX > -1 And intY > -1 Then
+		InsFindStep = True
+		Exit Function
+	End If
+
+	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","-1|-1|5AEFFF",0,Similarity,intX,intY
+	If intX > -1 And intY > -1 Then
+		InsFindStep = True
+		Exit Function
+	End If
+	
+	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","1|-1|5AEFFF",0,Similarity,intX,intY
+	If intX > -1 And intY > -1 Then
+		InsFindStep = True
+		Exit Function
+	End If
+	
+	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","-1|1|5AEFFF",0,Similarity,intX,intY
+	If intX > -1 And intY > -1 Then
+		InsFindStep = True
+		Exit Function
+	End If
+
+	InsFindStep = False
+End Function
+
+Function IsInsDead()
+	If CmpColorEx("897|557|FFFFFF,1072|576|FFFFFF,1174|637|FFFFFF,988|632|FFFFFF",0.95) = 1 Then
+		IsInsDead = True
+	Else
+		IsInsDead = False
+	End If
+End Function
+
+Function IsInsSkip()
+	//Dim intX,intY
+	//FindMultiColor 997,275,1106,397,"FFFFFF","-9|14|FFFFFF,41|4|FFFFFF,31|14|FFFFFF",0,0.9,intX,intY
+	//If intX > -1 And intY > -1 Then
+	//	IsInsSkip  = False
+	//Else 
+	//	IsInsSkip  = False
+	//End If
+	
+	//x different 41
+	If CmpColorEx("1103|42|FFFFFF,1106|55|FFFFFF,1152|44|FFFFFF,1141|55|FFFFFF",0.95) = 1 Then //2
+		IsInsSkip = True
+	ElseIf CmpColorEx("989|40|FFFFFF,980|54|FFFFFF,1030|44|FFFFFF,1022|50|FFFFFF", 0.95) = 1 Then //5
+		IsInsSkip = True
+	ElseIf CmpColorEx("1030|40|FFFFFF,1021|54|FFFFFF,1071|44|FFFFFF,1063|50|FFFFFF", 0.95) = 1 Then //4
+		IsInsSkip = True
+	ElseIf CmpColorEx("1071|40|FFFFFF,1062|54|FFFFFF,1112|44|FFFFFF,1104|50|FFFFFF", 0.95) = 1 Then //3
+		IsInsSkip = True
+	ElseIf CmpColorEx("1253|40|FFFFFF,1144|54|FFFFFF,1194|44|FFFFFF,1186|50|FFFFFF", 0.95) = 1 Then //1
+		IsInsSkip = True
+	Else
+		IsInsSkip = False
+	End If
+End Function
+
+Function IsInsReady()
+	If CmpColorEx("564|575|7BDBFF,713|575|7BDBFF,653|102|FFFFFF",0.95) = 1 Then
+		IsInsReady = True
+	Else
+		IsInsReady = False
+	End If
+End Function
+
+Function IsInsFinish()
+	If CmpColorEx("551|89|FFFFFF,560|127|FFFFFF,641|91|FFFFFF,643|123|FFFFFF,726|104|FFFFFF,720|130|FFFFFF",0.95) = 1 Then
+		IsInsFinish = True
+	Else
+		IsInsFinish = False
+	End If
+End Function
+
+Function IsInsChallangeAgain()
+	If CmpColorEx("725|686|FFFFFF,754|683|FFFFFF,784|685|FFFFFF,808|681|FFFFFF", 0.95) = 1 Then
+		IsInsChallangeAgain = True
+	Else
+		IsInsChallangeAgain = False
+	End If
+End Function
+
+Function IsInsStart()
+	If CmpColorEx("570|611|FFFBEE,602|622|FFFFFF,627|624|FFFFFF,655|620|FFFFFF,673|617|FFFFFF",0.95) = 1 Then
+		IsInsStart = True
+	Else
+		IsInsStart = False
+	End If
+End Function
+
+Function IsInsStartAgain()
+	If CmpColorEx("570|612|FFFBEF,601|625|FFFFFF,627|624|FFFFFF,652|627|FFFFFF,679|616|FFFFFF",0.95) = 1 Then
+		IsInsStartAgain = True
+	Else
+		IsInsStartAgain = False
+	End If
+End Function
+
+Function IsInsNoAutoAtk()
+	If CmpColorEx("813|536|FFFFFF,828|535|FFFFFF,821|544|FFFFFF",0.95) = 1 Then
+		IsInsNoAutoAtk = True
+	Else
+		IsInsNoAutoAtk = False
+	End If
+End Function
+/**************************************************************************
+副本区域-结束
+**************************************************************************/
+
+/**************************************************************************
+小游戏-开始
+**************************************************************************/
+Sub Tarvern()
+	//Dim InstanceTypeId = CInt(ReadUIConfig("酒馆胜方选框"))
+	Dim TarvernThread
+	
+	If ReadUIConfig("酒馆胜方选框") = True Then 
+		Call Alert("Tarvern", "胜方")
+		Call DelayMin()
+		TarvernThread = Thread.Start(DoTarvernWin)
+	End If
+	
+	Call DoTarvern()
+End Sub
+
+Sub DoTarvernWin()
+	Rem action
+	Dim targetX,targetY
+	FindMultiColor 697,586,929,624,"7BE3FF","5|0|7CE3FF",0,0.8,targetX,targetY
+	If targetX > -1 And targetY > -1 Then
+		Dim arrowX,arrowY
+		FindColor 689,677,928,679,"3D8CD1",0,0.95,arrowX,arrowY
+		If arrowX > -1 And arrowY > -1 Then
+			Touch 1126, 613, 100
+			Touch 1126, 613, 100
+		Else 
+			Goto action
+		End If
+	End If	
+	Goto action
+End Sub
+
+Sub DoTarvern()
+	Dim TarvernTime = 0
+    Dim TarvernCount = 0
+    Dim messageArray(3)
+    messageArray(0) = "酒馆次数设为"
+	
+    If (IsNull(TarvernTime) or TarvernTime = "") Then
+        TarvernTime = 0
+    Else 
+    	TarvernTime = CInt(TarvernTime)
+    End If
+	
+    messageArray(1) = TarvernTime
+    messageArray(2) = "次"
+	
+    Call Alert("InstanceCommonAction", Join(messageArray, ""))
+    Call DelayMid()
+	
+	messageArray(0) = "开始酒馆，第"
+    messageArray(1) = TarvernCount + 1
+    Call Alert("Fishing", Join(messageArray, ""))
+	
+    Rem action	
+	Delay 3000
+	
+	If IsTarReady() = True Then 
+		Touch 1119, 604, 200
+		Touch 1119, 604, 200
+	ElseIf IsTarFInish() = True Then
+		Touch 445, 607, 200
+		Touch 445, 607, 200
+		
+		messageArray(1) = TarvernCount + 1
+    	Call Alert("Fishing", Join(messageArray, ""))
+	End If
+	
+	Goto action
+End Sub
+
+Function IsTarReady()
+	If CmpColorEx("507|93|B1E3EF,776|94|A9DFEF,412|601|FFFFFF",0.9) = 1 Then
+		IsTarReady = True
+	Else
+		IsTarReady = False
+	End If
+End Function
+
+Function IsTarFInish()
+	If CmpColorEx("489|364|FFFFFF,632|391|FFFFFF,766|371|FFFFFF,445|607|FFFFFF",0.9) = 1 Then
+		IsTarFInish = True
+	Else
+		IsTarFInish = False
+	End If
+End Function
+/**************************************************************************
+小游戏-结束
+**************************************************************************/
+
+/**************************************************************************
+Test Ocr Start
+**************************************************************************/
+Sub ocrTest
+    Dim ocrchar
+    ocrchar=Ocr(181,65,255,88,"969696-333333",0.8)
+    Traceprint ocrchar
+    Delay 1000
+    Call ocrTest()
+End Sub
+/**************************************************************************
+Test Ocr End
+**************************************************************************/
+
+
+/**************************************************************************
+Util
+**************************************************************************/
+Sub Alert(fucnName, text)
+    Dim textArray(2)
+textArray(0) = fucnName
+    textArray(1) = text
+    ShowMessage text, 3000, 370, 20
+    TracePrint(Join(textArray, ": "))
+End Sub
+
+Sub DelayMin
+    Delay 1500
+End Sub
+
+Sub DelayMid
+    Delay 3000
+End Sub
+
+Sub DelayLong
+    Delay 6000
+End Sub
+
+Sub BuyQtyPress(number)
+	Select Case number
+		Case 0
+			Call Alert("BuyQtyPress", "数量按0")
+			Touch 1000, 430, 100
+		Case 1
+			Call Alert("BuyQtyPress", "数量按1")
+			Touch 777, 350, 100
+		Case 2
+			Call Alert("BuyQtyPress", "数量按2")
+			Touch 847, 350, 100
+		Case 3
+			Call Alert("BuyQtyPress", "数量按3")
+			Touch 917, 350, 100
+		Case 4
+			Call Alert("BuyQtyPress", "数量按4")
+			Touch 777, 430, 100
+		Case 5
+			Call Alert("BuyQtyPress", "数量按5")
+			Touch 847, 430, 100
+		Case 6
+			Call Alert("BuyQtyPress", "数量按6")
+			Touch 917, 430, 100
+		Case 7
+			Call Alert("BuyQtyPress", "数量按7")
+			Touch 777, 500, 100
+		Case 8
+			Call Alert("BuyQtyPress", "数量按8")
+			Touch 847, 500, 100
+		Case 9
+			Call Alert("BuyQtyPress", "数量按9")
+			Touch 917, 500, 100
+		Case "yes"
+			Call Alert("BuyQtyPress", "数量按确定")
+			Touch 1000, 500, 100
+		Case Else
+            Call Alert("BuyQtyPress", "找不到对应的号码")
+    End Select
+End Sub
+
+Sub BuyQtyPressCommercial(number)
+	Select Case number
+		Case 0
+			Call Alert("BuyQtyPress", "数量按0")
+			Touch 1000, 430, 100
+		Case 1
+			Call Alert("BuyQtyPress", "数量按1")
+			Touch 777, 350, 100
+		Case 2
+			Call Alert("BuyQtyPress", "数量按2")
+			Touch 847, 350, 100
+		Case 3
+			Call Alert("BuyQtyPress", "数量按3")
+			Touch 917, 350, 100
+		Case 4
+			Call Alert("BuyQtyPress", "数量按4")
+			Touch 777, 430, 100
+		Case 5
+			Call Alert("BuyQtyPress", "数量按5")
+			Touch 847, 430, 100
+		Case 6
+			Call Alert("BuyQtyPress", "数量按6")
+			Touch 917, 430, 100
+		Case 7
+			Call Alert("BuyQtyPress", "数量按7")
+			Touch 777, 500, 100
+		Case 8
+			Call Alert("BuyQtyPress", "数量按8")
+			Touch 847, 500, 100
+		Case 9
+			Call Alert("BuyQtyPress", "数量按9")
+			Touch 917, 500, 100
+		Case "yes"
+			Call Alert("BuyQtyPress", "数量按确定")
+			Touch 1000, 500, 100
+		Case Else
+            Call Alert("BuyQtyPress", "找不到对应的号码")
+    End Select
+End Sub
+
+Sub VerificationKeyPad(number)
+	Select Case number
+		Case 0
+			Call Alert("VerificationKeyPad", "号码按0")
+			Touch 1047,474, 100
+		Case 1
+			Call Alert("VerificationKeyPad", "号码按1")
+			Touch 826,403, 100
+		Case 2
+			Call Alert("VerificationKeyPad", "号码按2")
+			Touch 905,402, 100
+		Case 3
+			Call Alert("VerificationKeyPad", "号码按3")
+			Touch 974,403, 100
+		Case 4
+			Call Alert("VerificationKeyPad", "号码按4")
+			Touch 830,479, 100
+		Case 5
+			Call Alert("VerificationKeyPad", "号码按5")
+			Touch 898,475, 100
+		Case 6
+			Call Alert("VerificationKeyPad", "号码按6")
+			Touch 975,476, 100
+		Case 7
+			Call Alert("VerificationKeyPad", "号码按7")
+			Touch 833,548, 100
+		Case 8
+			Call Alert("VerificationKeyPad", "号码按8")
+			Touch 904,544, 100
+		Case 9
+			Call Alert("VerificationKeyPad", "号码按9")
+			Touch 976,548, 100
+		Case "yes"
+			Call Alert("VerificationKeyPad", "号码按确定")
+			Touch 1048,544, 100
+		Case Else
+            Call Alert("VerificationKeyPad", "找不到对应的号码")
+    End Select
+End Sub
+
+/**************************************************************************
+Util End
+**************************************************************************/

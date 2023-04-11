@@ -1,0 +1,50 @@
+/**************************************************************************
+Button Function
+**************************************************************************/
+Function ResetOption()
+	UIP.SetAttribute "看板选框", {"选中":false}
+	UIP.SetAttribute "钓鱼任务", {"选中":false}
+	UIP.SetAttribute "萌王选框", {"选中":false}
+	UIP.SetAttribute "商会选框", {"选中":false}
+	UIP.SetAttribute "公会选框", {"选中":false}
+	UIP.SetAttribute "定时选框", {"选中":false}
+	UIP.SetAttribute "钓鱼选框", {"选中":false}
+	UIP.SetAttribute "园丁选框", {"选中":false}
+	UIP.SetAttribute "副本选框", {"选中":false}
+	UIP.SetAttribute "酒馆选框", {"选中":false}
+End Function
+
+Function 普通复活()
+	Dim cb = UIP.GetAttribute("副本普通复活选框")
+	If (cb["选中"]) Then 
+		UIP.SetAttribute "副本原地复活选框", {"选中":false}		
+	End If
+End Function
+
+Function 原地复活()
+	Dim cb = UIP.GetAttribute("副本原地复活选框")
+	If (cb["选中"]) Then 
+		UIP.SetAttribute "副本普通复活选框", {"选中":false}		
+	End If
+End Function
+/**************************************************************************
+Button Function End
+**************************************************************************/
+
+
+
+/*
+
+            多选框:
+            {
+                名称:"定时选框",
+                提示内容:"定时启动任务",
+                点击响应:"定时启动任务",
+                选中:false,
+                文字大小:25,
+                高度:0,
+                宽度:250,
+                注释:"文字大小、高度、宽度是可选属性，如需使用默认值，可保持值为0或直接删除此属性"
+            },
+
+*/
