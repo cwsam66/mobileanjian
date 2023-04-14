@@ -8,6 +8,7 @@ zm.Init
 //ShowMessage ("测试显示信息",10000, 370, 20)
 Call Alert("Init", "初始：信息检测")
 
+
 /*
 Call Alert("看板选框",  CStr(ReadUIConfig("看板选框")))
 Call DelayMin()
@@ -39,7 +40,7 @@ Call DelayMin()
 //Call GuildMission()
 //Call FishingMission()
 
-Delay 3000
+Delay 1000
 
 Call CheckLanguage()
 Call Check2DView()
@@ -47,6 +48,13 @@ Call Check2DView()
 Dim IsMission = False
 Dim IsLife = False
 Dim IsInstance = False
+Dim threadCheckDisconnect
+
+//If ReadUIConfig("断线重登选框") = True Then
+//	Call Alert("断线重登选框", "断线重登")
+//	Call DelayMin()
+//	threadCheckDisconnect = Thread.Start(DisconnectCheck)
+//End if
 
 //任务大师
 //If ReadUIConfig("全套选框") = True Then 
@@ -54,6 +62,10 @@ Dim IsInstance = False
 //	Call DelayMin()
 //  Call AllMission()
 If ReadUIConfig("看板选框") = True or ReadUIConfig("萌王选框") = True or ReadUIConfig("商会选框") = True or ReadUIConfig("公会选框") = True Then 
+	//If threadCheckDisconnect <> Null Then 
+	//	Thread.Stop(threadCheckDisconnect)	
+	//End If
+	
 	Call Alert("任务选项", "任务选项")
 	Call DelayMin()
 	Call AllMission()
@@ -94,13 +106,17 @@ ElseIf ReadUIConfig("园丁选框") = True Then
 ElseIf ReadUIConfig("副本选框") = True Then
 	Call Alert("副本选框", "副本师傅")
 	Call DelayMin()
-    Call Instancing()
+    Call Instancing(True)
 //游戏大师
 ElseIf ReadUIConfig("酒馆选框") = True Then
 	Call Alert("酒馆选框", "游戏师傅")
 	Call DelayMin()
     Call Tarvern()
 ElseIf ReadUIConfig("断线重登选框") = True Then
+	//If threadCheckDisconnect <> Null Then 
+	//	Thread.Stop(threadCheckDisconnect)		
+	//End If
+	
 	Call Alert("断线重登选框", "断线重登")
 	Call DelayMin()
     Call DisconnectCheck()
@@ -207,7 +223,8 @@ Sub Gardening
 	iHour = DateTime.Hour()
 	iMin = DateTime.Minute()
 	
-	If ((iHour = 1 or iHour = 3 or iHour = 5 or iHour = 7 or iHour = 9 or iHour = 11) and iMin < 40) or ReadUIConfig("园丁自动开始停止") = False Then 
+	//If ((iHour = 1 or iHour = 3 or iHour = 5 or iHour = 7 or iHour = 9 or iHour = 11 or iHour = 13 or iHour = 15 or iHour = 17 or iHour = 19 or iHour = 21 or iHour = 23) and (iMin < 40 or iMin > 58)) or ReadUIConfig("园丁自动开始停止") = False Then 
+	If (iHour Mod 2 = 1 and iMin < 40) or (iHour Mod 2 = 0 and iMin > 58) or ReadUIConfig("园丁自动开始停止") = False Then
 		//click garden button
     	//If (pointA = color and pointB = color) Then 
     	If CmpColorEx("802|280|BEE3EF,805|288|C2E3EC",0.95) = 1 Then
@@ -253,7 +270,13 @@ Sub Gardening
 		End If
 		
     	Delay 150
-	Else
+	Else 
+		Dim messageArray(4)
+		messageArray(0) = iHour
+		messageArray(1) = "点"
+    	messageArray(2) = iMin
+    	messageArray(3) = "分"
+    	Call Alert("Fishing", Join(messageArray, ""))
 		Delay 30000
 	End If
 	
@@ -724,7 +747,7 @@ Sub DoGuildMission()
         Goto CheckAction
     ElseIf IsTradeCentre() = True Then
     	Call Alert("DoGuildMission", "任务道具")
-    	Touch 400, 230, 100 //click on first item to buy
+    	Touch 400, 230, 200 //click on first item to buy
     	Call DelayMin()
     	//Touch 540, 380, 100 //click on quantity box
     	//Call DelayMin()
@@ -732,14 +755,15 @@ Sub DoGuildMission()
     	//Call DelayMin()
     	//Call BuyQtyPressCommercial("yes") // click confirm
     	//Call DelayMin()
-    	Touch 445, 600, 100 // click buy
+    	Touch 445, 600, 200 // click buy
     	Call DelayMid()
     	Call Alert("DoGuildMission", "购买中")
-    	Do While CmpColorEx("611|95|8E6EFF",0.9) <> 1
+    	//Do While CmpColorEx("611|95|8E6EFF",0.9) <> 1
+    	Do While CmpColorEx("613|205|FFFFFF,628|205|FFFFFF,648|203|FFFFFF,668|202|FFFFFF",0.95) = 1
         	Call DelayMid()
     	Loop
     	Call Alert("DoGuildMission", "交易记录")
-    	Touch 520, 100, 100 // click trade history
+    	Touch 520, 100, 200 // click trade history
     	Call DelayMid()
     	Call Alert("DoGuildMission", "选择")
     	Touch 1140, 250, 100 // select purchased item
@@ -751,6 +775,8 @@ Sub DoGuildMission()
     		Call DelayMin()
     	Loop
     	Call Alert("DoGuildMission", "领取")
+    	Touch 1200, 170, 100 // touch collect
+    	Call DelayMin()
     	Touch 1200, 170, 100 // touch collect
     	Call DelayMin()
     	Touch 1200, 170, 100 // touch collect
@@ -911,11 +937,11 @@ Sub AllMission
     	Touch 820, 546, 100
 	End If
     
-    If ReadUIConfig("钓鱼任务") = True Then
-		Call Alert("AllMission", "先做钓鱼任务")
-		Call DelayMin()
-		Call FishingMission()
-	End If
+    //If ReadUIConfig("钓鱼任务") = True Then
+	//	Call Alert("AllMission", "先做钓鱼任务")
+	//	Call DelayMin()
+	//	Call FishingMission()
+	//End If
 	
 	IF ReadUIConfig("看板选框") = True Then
 		Call Alert("AllMission", "看板任务")
@@ -1387,9 +1413,9 @@ Sub DoMission(count, x, y)
         
 		Call DelayMid()
         Call DoMission(count + 1, touchMissionX, touchMissionY)
-    ElseIf ReadUIConfig("全套选框") = False Then
-        Call DelayMid()
-        Call GoProntera()
+    //ElseIf ReadUIConfig("全套选框") = False Then
+    //    Call DelayMid()
+    //    Call GoProntera()
     End If
 End Sub
 
@@ -1594,9 +1620,9 @@ Sub DoMission2(count, x, y)
 
 		//Call DelayMid()
         Call DoMission2(count + 1, touchMissionX, touchMissionY)
-    ElseIf ReadUIConfig("全套选框") = False Then
-        Call DelayMid()
-        Call GoProntera()
+    //ElseIf ReadUIConfig("全套选框") = False Then
+    //    Call DelayMid()
+    //    Call GoProntera()
     End If
 End Sub
 
@@ -1688,11 +1714,11 @@ Sub CheckWholeMapAttack()
 		Touch 1142, 288, 100
 		Call DelayMid()
 		//press on attack whole map option 3 times
-		Touch 894, 435, 100
+		Touch 893, 410, 200
 		Call DelayMin()
-		Touch 894, 435, 100
+		Touch 893, 410, 200
 		Call DelayMin()
-		Touch 894, 435, 100
+		Touch 893, 410, 200
 		Call DelayMin()
 		//close auto attack menu
 		Touch 1044, 86, 100
@@ -1705,6 +1731,7 @@ Sub CheckWholeMapAttack()
 	End If
 End Sub
 
+//not using
 Function CheckMissionAction()
     If CheckIsMissionBoard() = True Then 
         TracePrint("CheckMissionAction: missionboard")
@@ -1841,6 +1868,75 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
         Touch touchMissionX, touchMissionY, 100
         Call DelayMin()
         CheckAndDoMissionAction = True
+    ElseIf IsButtonFishing() = True Then
+    	Call Alert("CheckAndDoMissionAction", "钓鱼按钮")
+    	Call DelayMid()
+    	Touch 798, 285, 200 // touch fishing button
+    	Call DelayMid()
+    	Touch 882, 668, 200 // touch bait button
+    	Call DelayMid()
+
+		// check is in fishing bait screen
+    	If CmpColorEx("657|152|FFFFFF,725|147|FFFFFF,676|217|FFFFFF,1076|585|FFFFFF", 0.9) = 1 Then 
+    		Call Alert("CheckAndDoMissionAction", "进入钓鱼任务")
+    		Call DelayMid()
+    		
+    		//select second bait
+    		While CmpColorEx("661|397|FFFFFF,673|391|FFFFFF,665|401|FFFFFF", 0.95) <> 1
+    			Touch 690, 371, 200
+    			Call DelayMid()
+    		Wend
+    		
+    		Rem fishing
+    		// click start fishing until box pop up
+    		While CmpColorEx("401|239|FFFFFF,463|228|FFFFFF,440|233|FFFFFF,661|327|FFFFFF",0.95) <> 1
+    			Touch 1087, 526, 200
+    			Call DelayMid()
+    		Wend
+
+			// retry button 9/9 alraedy
+			If ReadUIConfig("钓鱼任务重试选框") = False or CmpColorEx("544|414|FFFFFF,543|426|FFFFFF,540|418|FFFFFF,547|420|FFFFFF,545|424|FFFFFF", 0.95) = 1 Then 
+    			Touch 737, 419, 200 //制作鱼拓
+    			Call DelayMid()
+    			Touch 737, 419, 200 //制作鱼拓
+    			Call DelayMid()
+    			Touch 741, 461, 200 //确定
+				Call DelayMid()
+				Touch 741, 461, 200
+				Call DelayMid()
+    		//have 放生 button
+    		//当前鱼类不在鱼拓排行榜内哦~
+    		//该鱼类暂未上榜,请继续努力哦~
+    		ElseIf CmpColorEx("497|285|96E2FB,610|284|96E2FB,717|282|96E2FB,722|283|96E2FB,523|428|FFFFFF,497|415|FFFFFF", 0.95) = 1 or CmpColorEx("515|284|96E2FB,538|289|95E3FC,594|284|95E3FC,732|287|96E2FB,523|428|FFFFFF,497|415|FFFFFF", 0.95) = 1 Then 
+    			Call Alert("CheckAndDoMissionAction", "放生")
+				Touch 533, 422, 200 //放生
+				Call DelayMid()
+				Touch 533, 422, 200
+				Call DelayMid()
+				Touch 741, 461, 200 //确定
+				Call DelayMid()
+				Touch 741, 461, 200
+				Call DelayMid()
+				Goto fishing
+			Else 
+				Touch 737, 419, 200 //制作鱼拓
+    			Call DelayMid()
+    			Touch 737, 419, 200 //制作鱼拓
+    			Call DelayMid()
+    			Touch 741, 461, 200 //确定
+				Call DelayMid()
+				Touch 741, 461, 200
+				Call DelayMid()
+			End If
+    	//exit fishing and try again
+    	ElseIf CmpColorEx("1037|162|FFFFFF,1037|192|FFFFFF,1073|580|FFFFFF",0.9) = 1 Then
+			Touch 1037, 162, 200 //touch exit fishing button
+			Call DelayMin()
+			Touch 1037, 162, 200
+			Call DelayMin()
+    	End If
+    	
+    	CheckAndDoMissionAction = True
     ElseIf IsSubmitItem() = True Then
     	Call Alert("CheckAndDoMissionAction", "交付物品页面")
         Touch 1022, 615, 100
@@ -1902,6 +1998,55 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
         Touch touchMissionX, touchMissionY, 100
         Call DelayMin()
         CheckAndDoMissionAction = True
+    ElseIf IsTradeCentre() = True Then
+    	Call Alert("CheckAndDoMissionAction", "交易行")
+    	Call DelayMin()
+    	
+    	If ReadUIConfig("交易行自动购买") = True Then 
+    		Touch 400, 230, 200 //click on first item to buy
+    		Call DelayMin()
+    		//Touch 540, 380, 100 //click on quantity box
+    		//Call DelayMin()
+    		//Call BuyQtyPressCommercial(1) // click number 1
+    		//Call DelayMin()
+    		//Call BuyQtyPressCommercial("yes") // click confirm
+    		//Call DelayMin()
+    		Touch 445, 600, 200 // click buy
+    		Call DelayMid()
+    		Call Alert("DoGuildMission", "购买中")
+    		//Do While CmpColorEx("611|95|8E6EFF",0.9) <> 1
+    		Do While CmpColorEx("613|205|FFFFFF,628|205|FFFFFF,648|203|FFFFFF,668|202|FFFFFF",0.95) = 1
+        		Call DelayMid()
+    		Loop
+    		Call Alert("DoGuildMission", "交易记录")
+    		Touch 520, 100, 200 // click trade history
+    		Call DelayMid()
+    		Call Alert("DoGuildMission", "选择")
+    		Touch 1140, 250, 100 // select purchased item
+    		Call DelayMid()
+    		//if still not selected thenselect again
+    		Do While CmpColorEx("1143|255|C6C3C2,1169|246|C6C3C2", 0.95) = 1 
+    			Call Alert("DoGuildMission", "再尝试选择")
+    			Touch 1140, 250, 100 // select purchased item
+    			Call DelayMin()
+    		Loop
+    		Call Alert("DoGuildMission", "领取")
+    		Touch 1200, 170, 100 // touch collect
+    		Call DelayMin()
+    		Touch 1200, 170, 100 // touch collect
+    		Call DelayMin()
+    		Touch 1200, 170, 100 // touch collect
+    		Call DelayMin()
+    		Touch 1200, 170, 100 // touch collect
+    		Call DelayMin()
+    		Touch 1175,47, 100 // exit from shop
+    		Call DelayMid()
+    	Else 
+    		Call Alert("CheckAndDoMissionAction", "没选择交易行自动购买")
+    		Call DelayMid()
+    	End If
+    	
+    	CheckAndDoMissionAction = True
     ElseIf IsNoteScreeen() = True Then
     	Call Alert("CheckAndDoMissionAction", "关闭笔记页面")
     	Touch 877, 71, 100 // close mini map
@@ -2175,14 +2320,14 @@ Function IsButtonAppease
 	End If
 End Function
 
-Function IsButtonFishing
-    If CmpColorEx("782|317|FFFFFF,782|325|FFFFFF,809|316|FFFFFF,808|328|FFFFFF", 0.95) = 1 Then
-		Call Alert("IsButtonAppease", "钓鱼按钮")
-        IsButtonFishing = True
-	Else
-		IsButtonFishing = False
-	End If
-End Function
+//Function IsButtonFishing
+//    If CmpColorEx("782|317|FFFFFF,782|325|FFFFFF,809|316|FFFFFF,808|328|FFFFFF", 0.95) = 1 Then
+//		Call Alert("IsButtonAppease", "钓鱼按钮")
+//        IsButtonFishing = True
+//	Else
+//		IsButtonFishing = False
+//	End If
+//End Function
 
 Function IsButtonCai
     If CmpColorEx("856|297|FFFFFF,856|312|FFFFFF",0.95) = 1 Then
@@ -2201,7 +2346,6 @@ Function IsButtonCha
 		IsButtonCha = False
 	End If
 End Function
-
 
 Function IsButtonFingerUp
     If CmpColorEx("859|388|F4FCFF,887|381|F0FFFF,876|411|F4FFFF",0.95) = 1 Then
@@ -2236,6 +2380,15 @@ Function IsBoxWithActionButton
         IsBoxWithActionButton = True
 	Else
 		IsBoxWithActionButton = False
+	End If
+End Function
+
+Function IsButtonFishing
+    If CmpColorEx("809|316|FFFFFF,808|328|FFFFFF,783|317|FFFFFF,791|331|FFFFFF,782|315|FFFFFF",0.95) = 1 Then
+		Call Alert("IsBoxWithActionButton", "钓鱼按钮")
+        IsButtonFishing = True
+	Else
+		IsButtonFishing = False
 	End If
 End Function
 
@@ -2450,7 +2603,8 @@ Function IsCommercialBuyScreen
 End Function
 
 Function IsTradeCentre
-	If CmpColorEx("75|130|EFB57D,1240|110|716E79,1260|700|BDB0B2,20|700|BBB7B6", 0.9) = 1 Then 
+	//If CmpColorEx("75|130|EFB57D,1240|110|716E79,1260|700|BDB0B2,20|700|BBB7B6", 0.9) = 1 Then 
+	If CmpColorEx("111|96|FFFFFF,147|15|FFFFFF,213|16|FFFFFF,947|28|FFFFFF",0.9) = 1 Then
 		Call Alert("IsTradeCentre", "交易行画面")
 		IsTradeCentre = True
 	Else
@@ -2590,7 +2744,7 @@ End Function
 
 Function IsMiniMapOpened
 	If CmpColorEx("570|99|FFFFFF,1242|75|866BDF,1196|536|EECD8B,815|579|66CCFF",0.95) = 1 Then
-		Call Alert("IsMiniMapOpened", "卡在小地图")
+		//Call Alert("IsMiniMapOpened", "小地图开了")
         IsMiniMapOpened = True
 	Else
 		IsMiniMapOpened = False
@@ -2651,9 +2805,20 @@ End Function
 /**************************************************************************
 副本区域-开始
 **************************************************************************/
-Sub Instancing()
+Dim InstanceThread
+Sub Instancing(StartDoInstance)
 	Dim InstanceTypeId = CInt(ReadUIConfig("副本种类"))
-	Dim InstanceThread
+	TracePrint "Instancing"
+	TracePrint InstanceThread
+	
+	//check menu page
+	If CmpColorEx("1218|266|FFFFFF,1247|266|E8996D",0.95) = 1 Then
+		//switch to atk menu
+		Touch 1230, 265, 200
+		Delay 500
+	End If
+	//Touch 1119,561,200 //atk
+	//Delay 500
 	
 	If (InstanceTypeId = 1) Then 
 		Call Alert("Instancing", "海盗船长室")
@@ -2661,48 +2826,57 @@ Sub Instancing()
 		InstanceThread = Thread.Start(DoInstancePirate)
 	End If
 	
-	Call DoInstance()
+	If StartDoInstance = True Then
+		Call DoInstance()
+	End If
 End Sub
 
 Sub DoInstancePirate()
 	Dim FinsStartX,FindStartY,FindEndX,FindEndY
 	Dim Interval = ReadUIConfig("副本停顿")
+	Dim BossCount = 0
     Rem action
     Delay Interval
     
     // check if stuck at mini map
-    If IsMiniMapOpened() = True Then
+    //If IsMiniMapOpened() = True Then
     	//Call Alert("CheckAndDoMissionAction", "关闭小地图")
-    	Touch 1243, 85, 100 // close mini map
-    	Call DelayMin()
-    End If
+    //	Touch 1243, 85, 200 // close mini map
+    //	Delay 500
+    //End If
     
     //Call Alert("DoInstancePirate", "开地图")
     //Call DelayMid()
     //check can open map
-    If CmpColorEx("1039|183|FFFFFF,1210|19|FFFFFF,1259|199|7C7B84", 0.95) = 1 Then 
+    //If CmpColorEx("1039|183|FFFFFF,1210|19|FFFFFF,1259|199|7C7B84", 0.95) = 1 or IsMiniMapOpened() = True Then 
     	//Call Alert("DoInstancePirate", "开地图中")
     	//Call DelayMid()
-    	
-    	//check menu page
-		If CmpColorEx("1218|266|FFFFFF,1247|266|E8996D",0.95) = 1 Then
-			//switch to atk menu
-			Touch 1230, 265, 100
-			Call DelayMin()
-		End If
-		Touch 1119,561,200
-		Delay 1000
-		Touch 1111, 80, 200
-		Delay 2000
-	Else 
+		
+		//While IsMiniMapOpened() = False
+		//	Touch 1111, 80, 200 //open map
+		//	Delay 1000
+		//Wend
+	//Else 
 		//Call Alert("DoInstancePirate", "不能开地图")
     	//Call DelayMid()
-    	Delay 5000
+    	//Delay Interval
+		//Goto action
+	//End If
+	
+	                                    //check can open map
+	While IsMiniMapOpened() = False and CmpColorEx("1039|183|FFFFFF,1210|19|FFFFFF,1259|199|7C7B84", 0.95) = 1
+		Touch 1111, 80, 200 //open map
+		Delay 1000
+	Wend
+	
+	If IsMiniMapOpened() = False Then 
 		Goto action
 	End If
     
     //Call Alert("DoInstancePirate", "开地图后")
-    Call DelayMid()
+    //Call DelayMid()
+    
+    //Rem mapOpenned
     
     //1st Step 840,252,893,307
     FinsStartX = 840
@@ -2710,10 +2884,14 @@ Sub DoInstancePirate()
     FindEndX = 893
     FindEndY = 307
     
-    If InsFindStep(FinsStartX,FindStartY,FindEndX,FindEndY) = True Then 
-    	Touch 920, 280, 200
-    	Delay 1000
-    	Call InsAutoAtk()
+    If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
+    	While IsMiniMapOpened() = True
+    		Touch 920, 280, 200
+    		Delay 800
+    	Wend
+    	While IsInsNoAutoAtk() = True
+    		Call InsAutoAtk()
+    	Wend
     	Goto action
     End If
     
@@ -2724,9 +2902,13 @@ Sub DoInstancePirate()
     FindEndY = 305
     
     If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
-    	Touch 935, 340, 200
-    	Delay 1000
-    	Call InsAutoAtk()
+    	While IsMiniMapOpened() = True
+    		Touch 935, 350, 200
+    		Delay 800
+    	Wend
+    	While IsInsNoAutoAtk() = True
+    		Call InsAutoAtk()
+    	Wend
     	Goto action
     End If
     
@@ -2737,11 +2919,16 @@ Sub DoInstancePirate()
     FindEndY = 389
     
     If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
-    	Touch 975, 335, 200
-    	Delay 1000
-    	Call InsAutoAtk()
+    	While IsMiniMapOpened() = True
+    		Touch 975, 335, 200
+    		Delay 800
+    	Wend
+    	While IsInsNoAutoAtk() = True
+    		Call InsAutoAtk()
+    	Wend
     	Goto action
     End If
+    
     
     //4th Step 944,308,997,361
     FinsStartX = 944
@@ -2750,9 +2937,13 @@ Sub DoInstancePirate()
     FindEndY = 361
     
     If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
-    	Touch 1030,340,200
-    	Delay 1000
-    	Call InsAutoAtk()
+    	While IsMiniMapOpened() = True
+    		Touch 1030,340,200
+    		Delay 800
+    	Wend
+    	While IsInsNoAutoAtk() = True
+    		Call InsAutoAtk()
+    	Wend
     	Goto action
     End If
     
@@ -2763,9 +2954,13 @@ Sub DoInstancePirate()
     FindEndY = 397
     
     If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
-    	Touch 1030,340,200
-    	Delay 1000
-    	Call InsAutoAtk()
+    	While IsMiniMapOpened() = True
+    		Touch 1030,340,200
+    		Delay 800
+    	Wend
+    	While IsInsNoAutoAtk() = True
+    		Call InsAutoAtk()
+    	Wend
     	Goto action
     End If
     
@@ -2776,25 +2971,33 @@ Sub DoInstancePirate()
     FindEndY = 397
     
     If InsFindStep(FinsStartX, FindStartY, FindEndX, FindEndY) = True Then 
-    	Touch 1243, 85, 100 // close mini map
-    	Delay 1000
+    	While IsMiniMapOpened() = True
+    		Touch 1243, 85, 100 // close mini map
+    		Delay 800
+    	Wend
     	
-    	If IsInsNoAutoAtk() = True Then 
+    	While IsInsNoAutoAtk() = True
     		Call InsAutoAtk()
-    	End If
+    	Wend
     	
     	// try luck clicking on tresure box
     	Delay 1000
-    	Touch 633,160,200
-    	Touch 695,164,200
-    	Touch 633,219,200
-    	Touch 698,226,200
-    	Touch 667,187,200
+    	Touch 633,160,100
+    	Touch 645,164,100
+    	Touch 633,219,100
+    	Touch 648,226,100
+    	Touch 647,187,100
 
-		Touch 693,303,200
-		Touch 634,303,200
-		Touch 687,276,200
-		Touch 634,264,200
+		Touch 643,303,100
+		Touch 634,303,100
+		Touch 647,276,100
+		Touch 634,264,100
+		
+		BossCount = BossCount + 1
+		
+		If BossCount > 5 Then 
+			Swipe 200, 600, 200, 500, 500
+		End If
 		
     	Goto action
     End If
@@ -2822,27 +3025,48 @@ Sub DoInstance()
 	
 	messageArray(0) = "开始副本，第"
     messageArray(1) = FubenCount + 1
-    Call Alert("Fishing", Join(messageArray, ""))
+    Call Alert("DoInstance", Join(messageArray, ""))
 	
     Rem action	
-	Delay 5000
+	Delay 1000
 	
 	If IsInsDead() = True Then 
 		If ReadUIConfig("副本原地复活选框") = True Then 
-			Touch 988, 632, 200
+			Touch 988, 632, 100
 		ElseIf ReadUIConfig("副本普通复活选框") = True Then
-			Touch 1152, 631, 200
+			Touch 1152, 631, 100
 		End If
 		
 		// click ride
 		Delay 1000
-		Touch 34, 661, 200
+		Touch 34, 661, 100
 	ElseIf IsInsSkip() = True Then
-		Touch 950, 42, 200
-		Touch 1000, 42, 200
-		Touch 1050, 42, 200
-		Touch 1100, 42, 200
-		Touch 1150, 42, 200
+		Touch 950, 50, 100
+		Delay 200
+		Touch 1000, 50, 100
+		Delay 200
+		Touch 1050, 50, 100
+		Delay 200
+		Touch 1100, 50, 100
+		Delay 200
+		Touch 1150, 50, 100
+		Delay 200
+		
+		//TracePrint InstanceThread
+		//If (InstanceThread <> Null) Then
+		Thread.Stop (InstanceThread)
+		Call Alert("DoInstance", "暂停副本线程")
+			//TracePrint InstanceThread
+		//End If
+		
+		Delay 1500
+		
+		While IsInsSkip() = True
+			Delay 500
+		Wend
+		
+		//Call Alert("DoInstance", "重启副本线程")
+		Instancing(False)
 	ElseIf IsInsReady() = True Then
 		If IsInsStart() = True or IsInsStartAgain() Then
     		Touch 570,611,200
@@ -2880,23 +3104,100 @@ Sub DoInstance()
     	End If
 	ElseIf IsInsFinish() = True Then
 		Dim PlayerSlot = CInt(ReadUIConfig("点赞位置"))
-		
+		Dim Player = CInt(ReadUIConfig("组队人数"))
+		TracePrint "组队人数"
+		TracePrint Player
+		// x different 254	
 		Select Case PlayerSlot
 			Case 0
-				Touch 43,194, 200
-				Touch 43,194, 200
+				// 5 member pt
+				If (Player = 4) Then
+					Touch 43,194, 200
+					Touch 43, 194, 200
+				End If
+				
+				// 4 member pt
+				If (Player = 3) Then
+					Touch 176, 189, 200
+					Touch 176, 189, 200
+				End If
+				
+				// 3 member pt
+				If (Player = 2) Then
+					Touch 300,190, 200
+					Touch 300, 190, 200
+				End If
+				
+				// 2 member pt
+				If (Player = 1) Then
+					Touch 430, 189, 200
+					Touch 430, 189, 200
+				End If
+				
+				// 1 member pt
+				If (Player = 0) Then
+					Touch 552,197, 200
+					Touch 552, 197, 200
+				End If
 			Case 1
-				Touch 300,190, 200
-				Touch 300,190, 200
+				// 5 member pt
+				If (Player = 4) Then
+					Touch 300,190, 200
+					Touch 300, 190, 200
+				End If
+				
+				// 4 member pt
+				If (Player = 3) Then
+					Touch 430, 189, 200
+					Touch 430, 189, 200
+				End If
+				
+				// 3 member pt
+				If (Player = 2) Then
+					Touch 552,197, 200
+					Touch 552,197, 200
+				End If
+				
+				// 2 member pt
+				If (Player = 1) Then
+					Touch 684, 189, 200
+					Touch 684, 189, 200
+				End If
 			Case 2
-				Touch 552,197, 200
-				Touch 552,197, 200
+				// 5 member pt
+				If (Player = 4) Then
+					Touch 552, 197, 200
+					Touch 552, 197, 200
+				End If
+				
+				// 4 member pt
+				If (Player = 3) Then
+					Touch 684, 189, 200
+					Touch 684, 189, 200
+				End If
+				
+				// 3 member pt
+				If (Player = 2) Then
+					Touch 812,197, 200
+					Touch 812, 197, 200
+				End If
 			Case 3
-				Touch 812,197, 200
-				Touch 812,197, 200
+				// 5 member pt
+				If (Player = 4) Then
+					Touch 812,197, 200
+					Touch 812, 197, 200
+				End If
+					
+				// 4 member pt
+				If (Player = 3) Then
+					Touch 902, 189, 200
+					Touch 902, 189, 200
+				End If
 			Case 4
-				Touch 1064,192, 200
-				Touch 1064,192, 200
+				If (Player = 4) Then
+					Touch 1064,192, 200
+					Touch 1064, 192, 200
+				End If
     	End Select
     	
     	If IsInsChallangeAgain() = True Then 
@@ -2920,14 +3221,21 @@ Sub DoInstance()
 End Sub
 
 Sub InsAutoAtk()
-	Touch 820,545,200
-	Delay 1500
-	Touch 936,358,200
+	// touch open atk selection screen
+	While CmpColorEx("1143|288|FFFFFF,1144|275|FFFFFF,928|357|FFFFFF,936|361|FFFFFF",0.95) <> 1
+		Touch 820, 545, 200
+		Delay 500
+	Wend
+	// touch atk all when atk selection screen appear
+	While CmpColorEx("1143|288|FFFFFF,1144|275|FFFFFF,928|357|FFFFFF,936|361|FFFFFF",0.95) = 1
+		Touch 936,358,200
+		Delay 500
+	Wend
 End Sub
 
 Function InsFindStep(StartX,StartY,EndX,EndY)
 	Dim intX,intY
-	Dim Similarity = 0.9
+	Dim Similarity = 0.95
 	
 	FindMultiColor StartX,StartY,EndX,EndY,"5AEFFF","0|1|5AEFFF",0,Similarity,intX,intY
 	If intX > -1 And intY > -1 Then
@@ -3083,10 +3391,22 @@ End Sub
 Sub DoTarvernWin()
 	Rem action
 	Dim targetX,targetY
+	Dim reduceArrowLength = ReadUIConfig("酒馆范围缩小")
+	
 	FindMultiColor 697,586,929,624,"7BE3FF","5|0|7CE3FF",0,0.8,targetX,targetY
 	If targetX > -1 And targetY > -1 Then
 		Dim arrowX,arrowY
-		FindColor 689,677,928,679,"3D8CD1",0,0.95,arrowX,arrowY
+		Dim targetArrowX = 689
+		
+		If (IsNull(reduceArrowLength) or reduceArrowLength = "") Then
+        	reduceArrowLength = 0
+    	Else 
+    		reduceArrowLength = CInt(reduceArrowLength)
+    	End If
+    	
+    	targetArrowX = targetArrowX + reduceArrowLength
+		
+		FindColor targetArrowX,677,928,679,"3D8CD1",0,0.95,arrowX,arrowY
 		If arrowX > -1 And arrowY > -1 Then
 			Touch 1126, 613, 100
 			Touch 1126, 613, 100
@@ -3098,6 +3418,7 @@ Sub DoTarvernWin()
 End Sub
 
 Sub DoTarvern()
+	Dim TarvernThread
 	Dim TarvernTime = 0
     Dim TarvernCount = 0
     Dim messageArray(3)
@@ -3112,25 +3433,45 @@ Sub DoTarvern()
     messageArray(1) = TarvernTime
     messageArray(2) = "次"
 	
-    Call Alert("InstanceCommonAction", Join(messageArray, ""))
+    Call Alert("DoTarvern", Join(messageArray, ""))
     Call DelayMid()
 	
+	TarvernCount = TarvernCount + 1
 	messageArray(0) = "开始酒馆，第"
-    messageArray(1) = TarvernCount + 1
-    Call Alert("Fishing", Join(messageArray, ""))
+    messageArray(1) = TarvernCount
+    Call Alert("DoTarvern", Join(messageArray, ""))
 	
-    Rem action	
+	If ReadUIConfig("两次后停止胜利选框") = True Then 
+		TarvernThread = Thread.Start(DoTarvernWin)
+	End If
+	
+    Rem action
 	Delay 3000
 	
 	If IsTarReady() = True Then 
-		Touch 1119, 604, 200
+		Touch 1119, 604, 200 // click ready
 		Touch 1119, 604, 200
 	ElseIf IsTarFInish() = True Then
-		Touch 445, 607, 200
-		Touch 445, 607, 200
-		
-		messageArray(1) = TarvernCount + 1
-    	Call Alert("Fishing", Join(messageArray, ""))
+		If CmpColorEx("499|591|74CFF8", 0.95) = 1 Then 		
+			TarvernCount = TarvernCount + 1
+			messageArray(1) = TarvernCount
+    		Call Alert("DoTarvern", Join(messageArray, ""))
+    		
+    		If (ReadUIConfig("两次后停止胜利选框") = True or ReadUIConfig("两次后开始胜利选框") = True) and TarvernCount > 4 Then 
+    			Call Alert("DoTarvern", "结束酒馆")
+    			Thread.Stop(TarvernThread)
+				ExitScript
+    		ElseIf ReadUIConfig("两次后停止胜利选框") = True and TarvernCount > 2 Then 
+    			Call Alert("DoTarvern", "停止胜利")
+				Thread.Stop(TarvernThread)
+			ElseIf ReadUIConfig("两次后开始胜利选框") = True and TarvernCount = 3 Then
+				Call Alert("DoTarvern", "开始胜利")
+				TarvernThread = Thread.Start(DoTarvernWin)
+			End If
+			
+			Touch 445, 607, 200 // click again
+			Touch 445, 607, 200
+		End If
 	End If
 	
 	Goto action

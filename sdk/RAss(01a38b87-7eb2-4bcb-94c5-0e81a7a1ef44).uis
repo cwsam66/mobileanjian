@@ -27,6 +27,33 @@ Function 原地复活()
 		UIP.SetAttribute "副本普通复活选框", {"选中":false}		
 	End If
 End Function
+
+Function 酒馆胜方选框()
+	Dim win = UIP.GetAttribute("酒馆胜方选框")
+	
+	If win["选中"] Then 
+		UIP.SetAttribute "两次后停止胜利选框", {"选中":false}
+		UIP.SetAttribute "两次后开始胜利选框", {"选中":false}
+	End If
+End Function
+
+Function 两次后停止胜利选框()
+	Dim stopWinAfter2 = UIP.GetAttribute("两次后停止胜利选框")
+	
+	If stopWinAfter2["选中"] Then
+		UIP.SetAttribute "酒馆胜方选框", {"选中":false}
+		UIP.SetAttribute "两次后开始胜利选框", {"选中":false}
+	End If
+End Function
+
+Function 两次后开始胜利选框()
+	Dim startWinAfter2 = UIP.GetAttribute("两次后开始胜利选框")
+	
+	If startWinAfter2["选中"] Then
+		UIP.SetAttribute "酒馆胜方选框", {"选中":false}
+		UIP.SetAttribute "两次后停止胜利选框", {"选中":false}
+	End If
+End Function
 /**************************************************************************
 Button Function End
 **************************************************************************/
@@ -44,6 +71,18 @@ Button Function End
                 文字大小:25,
                 高度:0,
                 宽度:250,
+                注释:"文字大小、高度、宽度是可选属性，如需使用默认值，可保持值为0或直接删除此属性"
+            },
+
+            多选框:
+            {
+                名称:"钓鱼任务",
+                提示内容:"先做钓鱼任务",
+                点击响应:"钓鱼任务",
+                选中:false,
+                文字大小:0,
+                高度:0,
+                宽度:0,
                 注释:"文字大小、高度、宽度是可选属性，如需使用默认值，可保持值为0或直接删除此属性"
             },
 
