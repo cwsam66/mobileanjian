@@ -1,5 +1,6 @@
 SetRowsNumber (0)
 TracePrint SetDictEx(0, "Attachment:mq_soft.txt")
+TracePrint SetDictEx(1, "Attachment:字库_数字_活力.txt")
 TracePrint UseDict(0)
 
 Import "zm.luae"
@@ -49,12 +50,22 @@ Dim IsMission = False
 Dim IsLife = False
 Dim IsInstance = False
 Dim threadCheckDisconnect
+Dim threadRestartApp
+//Dim IsRestartingApp = False
+Thread.SetShareVar("IsRestartingApp", 0)
 
-//If ReadUIConfig("断线重登选框") = True Then
-//	Call Alert("断线重登选框", "断线重登")
-//	Call DelayMin()
-//	threadCheckDisconnect = Thread.Start(DisconnectCheck)
-//End if
+If ReadUIConfig("断线重登选框") = True Then
+	Call Alert("断线重登选框", "断线重登")
+	Call DelayMin()
+	threadCheckDisconnect = Thread.Start(DisconnectCheck)
+End If
+
+If ReadUIConfig("游戏强逼关闭自动重启选框") = True Then
+	Call Alert("游戏强逼关闭自动重启选框", "游戏强逼关闭自动重启")
+	Call DelayMin()
+	threadRestartApp = Thread.Start(RestartApp)
+End If
+
 
 //任务大师
 //If ReadUIConfig("全套选框") = True Then 
@@ -112,14 +123,19 @@ ElseIf ReadUIConfig("酒馆选框") = True Then
 	Call Alert("酒馆选框", "游戏师傅")
 	Call DelayMin()
     Call Tarvern()
-ElseIf ReadUIConfig("断线重登选框") = True Then
+//ElseIf ReadUIConfig("断线重登选框") = True Then
 	//If threadCheckDisconnect <> Null Then 
 	//	Thread.Stop(threadCheckDisconnect)		
 	//End If
 	
-	Call Alert("断线重登选框", "断线重登")
-	Call DelayMin()
-    Call DisconnectCheck()
+	//Call Alert("断线重登选框", "断线重登")
+	//Call DelayMin()
+    //Call DisconnectCheck()
+Else 
+ 	While 1 = 1
+		Call Alert("挂机", "挂机")
+		Delay 600000
+	Wend
 End if
 
 Sub Fishing
@@ -215,6 +231,8 @@ Sub Gardening
 		Touch 1055, 50, 200
 	End If
 
+	Call CheckStamina(20)
+
     Rem a
     //Dim pointA = GetPixelColor(802, 280)
     //Dim pointB = GetPixelColor(805, 288)
@@ -224,11 +242,13 @@ Sub Gardening
 	iMin = DateTime.Minute()
 	
 	//If ((iHour = 1 or iHour = 3 or iHour = 5 or iHour = 7 or iHour = 9 or iHour = 11 or iHour = 13 or iHour = 15 or iHour = 17 or iHour = 19 or iHour = 21 or iHour = 23) and (iMin < 40 or iMin > 58)) or ReadUIConfig("园丁自动开始停止") = False Then 
-	If (iHour Mod 2 = 1 and iMin < 40) or (iHour Mod 2 = 0 and iMin > 58) or ReadUIConfig("园丁自动开始停止") = False Then
+	If (iHour Mod 2 = 1 and iMin < 40) or (iHour Mod 2 = 0 and iMin > 58) or ReadUIConfig("园丁自动开始停止") = False Then 	
 		//click garden button
     	//If (pointA = color and pointB = color) Then 
     	If CmpColorEx("802|280|BEE3EF,805|288|C2E3EC",0.95) = 1 Then
         	Touch 802, 280, 100
+        Else 
+        	Call CheckStamina(20)
     	End If
     	
 		
@@ -242,6 +262,7 @@ Sub Gardening
 			Dim result
 			Dim idx = 1
 			Dim num = 0
+			TracePrint UseDict(0)
 			
 			ocrchar = Ocr(515, 330, 765, 370, "FFFFFF-111111", 1)
 			Traceprint ocrchar
@@ -276,7 +297,7 @@ Sub Gardening
 		messageArray(1) = "点"
     	messageArray(2) = iMin
     	messageArray(3) = "分"
-    	Call Alert("Fishing", Join(messageArray, ""))
+    	Call Alert("Gardening", Join(messageArray, ""))
 		Delay 30000
 	End If
 	
@@ -521,8 +542,8 @@ Function TakeCommercialMission
 End Function
 
 Sub DoCommercialMission(count)
-    Dim missionAvail_1 = GetPixelColor(69, 215)
-    Dim missionAvail_2 = GetPixelColor(69, 296)
+    //Dim missionAvail_1 = GetPixelColor(69, 215)
+    //Dim missionAvail_2 = GetPixelColor(69, 296)
     Dim touchMissionX = 0
     Dim touchMissionY = 0
     Dim quantity = ReadUIConfig("商会购买数量")
@@ -533,14 +554,16 @@ Sub DoCommercialMission(count)
     // sometime main mission cannot be hidden, so have to check daily mission 
     // is at first slot or second slot
     //If (Left(CStr(missionAvail_1), 1) = "F") Then
-    If CmpColorEx("69|215|F260D1",0.8) = 1 Then
-        touchMissionX = 260
-        touchMissionY = 210
+    //If CmpColorEx("69|215|F260D1",0.8) = 1 Then
+    //    touchMissionX = 260
+    //    touchMissionY = 210
     //ElseIf (Left(CStr(missionAvail_2), 1) = "F") Then 
-    ElseIf CmpColorEx("69|296|E55BC5",0.8) = 1 Then
-        touchMissionX = 260
-        touchMissionY = 290
-    End If
+    //ElseIf CmpColorEx("69|296|E55BC5",0.8) = 1 Then
+    //    touchMissionX = 260
+    //    touchMissionY = 290
+    //End If
+    
+    FindColor 51, 191, 279, 450, "F462D4|F262D3|F562D4|E561CA", 0, 0.90, touchMissionX, touchMissionY
     
     If (IsNull(quantity) or quantity = 0) Then 
     	quantity = 15
@@ -548,13 +571,19 @@ Sub DoCommercialMission(count)
 	
     Call Alert("DoCommercialMissionCount", count)
 	
-    If (touchMissionX > 0 or count < 10) Then 
+    If (touchMissionX > -1 or count < 10) Then 
         Call Alert("DoCommercialMission", "点击任务框")
         Touch touchMissionX, touchMissionY, 100
         Call DelayMin()
     End If
     
     Rem CheckAction
+    
+    //While IsRestartingApp
+	While Thread.GetShareVar("IsRestartingApp") = 1
+		Call Alert("DoMissiont", "商会任务，等待重启中")
+		Call DelayLong()
+	Wend
     
     If IsLoading() = True Then
     	Call DelayLong()
@@ -591,6 +620,7 @@ Sub DoCommercialMission(count)
 		
 		For resultLength
 			num = CInt(Mid(quantity, idx, 1))
+			TracePrint num
 			Call BuyQtyPress(num)
 			idx = idx + 1
 			Delay 300
@@ -693,6 +723,12 @@ Sub GuildMission()
 End Sub
 
 Sub GoGuildMission()
+	//While IsRestartingApp
+	While Thread.GetShareVar("IsRestartingApp") = 1
+		Call Alert("DoMissiont", "看板任务，等待重启中")
+		Call DelayLong()
+	Wend
+
 	Call Alert("GoGuildMission", "打开公会页面")
 	Touch 950, 400, 100
 	Call DelayMid()
@@ -711,6 +747,12 @@ Sub DoGuildMission()
 	Dim count = 0
 	
 	Rem CheckAction
+	
+	//While IsRestartingApp
+	While Thread.GetShareVar("IsRestartingApp") = 1
+		Call Alert("DoMissiont", "看板任务，等待重启中")
+		Call DelayLong()
+	Wend
 	
 	If IsPathFinding() = True or IsLoading() = True Then 
     	Call DelayLong()
@@ -1116,6 +1158,104 @@ Sub DisconnectCheck()
     Goto action
 End Sub
 
+Sub RestartApp()
+	Dim PageLoadCount = 0
+	Dim PageLoadPixelColor1, PageLoadPixelColor2
+	Rem action
+	
+	If Not Sys.AppIsFront("com.play.rosea") or Not Sys.IsRunning("com.play.rosea") Then 
+		Dim BlackScreenCount = 0
+		PageLoadCount = 0
+		//IsRestartingApp = True
+		Thread.SetShareVar("IsRestartingApp", 1)
+		
+		TracePrint 1
+		TracePrint "1"
+		TracePrint Thread.SetShareVar("IsRestartingApp", 1)
+		TracePrint Thread.GetShareVar("IsRestartingApp") = 1
+		
+		KillApp "com.play.rosea"
+		Delay 2000
+		
+		RunApp "com.play.rosea"
+		Delay 2000
+		
+		//check is stuck at lock screen
+		While CmpColorEx("100|100|000000,100|600|000000,1000|100|000000,1000|600|000000", 0.95) = 1
+			BlackScreenCount = BlackScreenCount + 1
+			Delay 1000
+			
+			If (BlackScreenCount > 60) Then 
+				KillApp "com.play.rosea"
+				Delay 1000
+				Goto action
+			End If
+		Wend
+		
+		//click login
+		While Not IsLoading()
+			Touch 636, 631, 100
+			Delay 1000
+		Wend
+		
+		While CmpColorEx("25|589|FFFFFF,1212|10|FFFFFF,820|542|FFFFFF,1234|245|FFFFFF",0.90) <> 1		
+			//check is missed pirze notice
+			While CmpColorEx("733|432|FFFFFF,945|276|FFFFFF,349|188|FFFFFF,499|175|FFFFFF", 0.95) = 1
+				Touch 950, 288, 100
+				Delay 1000
+			Wend
+			Delay 1000
+		Wend
+		
+		If ReadUIConfig("钓鱼选框") = False And ReadUIConfig("园丁选框") = False Then 
+			Call InsAutoAtk()
+		End If
+		
+		KillApp "com.android.browser"
+		
+		//IsRestartingApp = false
+		Thread.SetShareVar "IsRestartingApp", 0
+		Call Alert("RestartApp", "重启完毕")
+	Else
+		If IsLoading() Then 
+			Dim arrayString(4)
+			ArrayString(0) = "288|252|"
+			ArrayString(1) = PageLoadPixelColor1
+			ArrayString(2) = ",715|257|"
+			ArrayString(3) = PageLoadPixelColor2
+			
+			TracePrint "IsLoading Stuck"
+			TracePrint PageLoadPixelColor1
+			TracePrint PageLoadPixelColor2
+			TracePrint CmpColorEx(Join(ArrayString, ""), 0.95)
+			
+			If PageLoadCount > 0 And CmpColorEx(Join(ArrayString, ""), 0.95) = 1 Then 
+				PageLoadCount = PageLoadCount + 1	
+			Else 
+				PageLoadCount = 1
+				PageLoadPixelColor1 = GetPixelColor(288, 252, 0)
+				PageLoadPixelColor2 = GetPixelColor(715, 257, 0)
+			End If
+			
+			//PageLoadCount = PageLoadCount + 1
+			
+			
+			If PageLoadCount > 5 Then 
+				Call Alert("RestartApp", "卡在加载中，重启游戏")
+				KillApp "com.play.rosea"
+				Goto action
+			End If
+		Else 
+			PageLoadCount = 0
+		End If
+		
+		
+	End If
+	
+	Delay 10000
+	Goto action
+End Sub
+
 /**************************************************************************
 断线检测区域-结束
 **************************************************************************/
@@ -1340,13 +1480,19 @@ Sub DoMission(count, x, y)
     //Dim missionAvail_1 = CmpColorEx("69|212|F762D4,69|223|F362CE",0.8)
     //Dim missionAvail_2 = CmpColorEx("69|293|F762D4,69|304|F362CE",0.8)
     //Dim missionAvail_3 = CmpColorEx("69|311|F762D4,69|322|F362CE",0.8)
-    Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
-    Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
-    Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
-    Dim touchMissionX = x
-    Dim touchMissionY = y
+    //Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
+    //Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
+    //Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
+    Dim touchMissionX// = x
+    Dim touchMissionY// = y
     Dim skipMissionChk = ReadUIConfig("跳过任务检查")
     Dim missionBoxPosition = ReadUIConfig("任务框位置")
+	
+	//While IsRestartingApp
+	While Thread.GetShareVar("IsRestartingApp") = 1
+		Call Alert("DoMissiont", "看板任务，等待重启中")
+		Call DelayLong()
+	Wend
 	
     // sometime main mission cannot be hidden, so have to check daily mission 
     // is at first slot or second slot
@@ -1371,15 +1517,17 @@ Sub DoMission(count, x, y)
         	touchMissionX = 150
         	touchMissionY = 325
         End If
-    ElseIf (missionAvail_1 = 1) Then
-        touchMissionX = 150
-        touchMissionY = 230
-    ElseIf (missionAvail_2 = 1) Then
-        touchMissionX = 150
-        touchMissionY = 310
-    ElseIf (missionAvail_3 = 1) Then
-        touchMissionX = 150
-        touchMissionY = 325
+    Else 
+    	FindColor 51, 191, 279, 450, "F462D4|F262D3|F562D4|E561CA", 0, 0.90, touchMissionX, touchMissionY
+    //ElseIf (missionAvail_1 = 1) Then
+    //    touchMissionX = 150
+    //    touchMissionY = 230
+    //ElseIf (missionAvail_2 = 1) Then
+    //    touchMissionX = 150
+    //    touchMissionY = 310
+    //ElseIf (missionAvail_3 = 1) Then
+    //    touchMissionX = 150
+    //    touchMissionY = 325
     End If
     
     If (skipMissionChk = true) Then 
@@ -1390,7 +1538,7 @@ Sub DoMission(count, x, y)
         	Touch touchMissionX, touchMissionY, 100
     	End If
     	Call DelayMin()
-    ElseIf (touchMissionX > 0) Then 
+    ElseIf (touchMissionX > -1) Then 
     	Call Alert("DoMissiont", "点击任务框")
         Touch touchMissionX, touchMissionY, 100
         Call DelayMin()
@@ -1579,24 +1727,26 @@ Sub DoMission2(count, x, y)
     //Dim missionAvail_1 = CmpColorEx("69|212|F762D4,69|223|F362CE",0.8)
     //Dim missionAvail_2 = CmpColorEx("69|293|F762D4,69|304|F362CE",0.8)
     //Dim missionAvail_3 = CmpColorEx("69|311|F762D4,69|322|F362CE",0.8)
-    Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
-    Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
-    Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
-    Dim touchMissionX = x
-    Dim touchMissionY = y
+    //Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
+    //Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
+    //Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
+    Dim touchMissionX// = x
+    Dim touchMissionY// = y
 	
     // sometime main mission cannot be hidden, so have to check daily mission 
     // is at first slot or second slot
-    If (missionAvail_1 = 1) Then
-        touchMissionX = 150
-        touchMissionY = 230
-    ElseIf (missionAvail_2 = 1) Then
-        touchMissionX = 150
-        touchMissionY = 310
-    ElseIf (missionAvail_3 = 1) Then
-        touchMissionX = 150
-        touchMissionY = 325
-    End If
+    //If (missionAvail_1 = 1) Then
+    //    touchMissionX = 150
+    //    touchMissionY = 230
+    //ElseIf (missionAvail_2 = 1) Then
+    //    touchMissionX = 150
+    //    touchMissionY = 310
+    //ElseIf (missionAvail_3 = 1) Then
+    //    touchMissionX = 150
+    //    touchMissionY = 325
+    //End If
+    
+    FindColor 51, 191, 279, 450, "F462D4|F262D3|F562D4|E561CA", 0, 0.90, touchMissionX, touchMissionY
     
     If (touchMissionX > 0) Then 
     	Call Alert("DoMissiont", "点击任务框")
@@ -1729,6 +1879,38 @@ Sub CheckWholeMapAttack()
 		Call Alert("CheckWholeMapAttack", "已打开全地图挂机")
 		Call DelayMid()
 	End If
+End Sub
+
+Sub CheckStamina(MinStamina)
+	Call Alert("CheckStamina", "活力检查")
+	Call DelayMid()
+    TracePrint UseDict(1)
+    Dim ocrchar
+    Dim result
+    Dim stamina
+    Dim messageArray(5)
+    
+    ocrchar = Ocr(159, 68, 283, 85, "FFFFFF-303030", 0.95)
+    Traceprint ocrchar
+    result = Split(ocrchar, "/")
+    TracePrint result(0)
+    
+    If Len(result) > 1 Then 
+    	stamina = CInt(result(0))
+    	If stamina < MinStamina Then 
+    		messageArray(0) = "剩余活力值["
+    		messageArray(1) = stamina
+    		messageArray(2) = "]少于["
+    		messageArray(3) = MinStamina
+    		messageArray(4) = "],停止"
+    		Call Alert("CheckStamina", Join(messageArray, ""))
+    		Call DelayMid()
+    		ExitScript
+    	End If
+    Else 
+    	Call Alert("CheckStamina", "活力读取错误")
+    	Call DelayMid()
+    End If
 End Sub
 
 //not using
@@ -1877,7 +2059,8 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
     	Call DelayMid()
 
 		// check is in fishing bait screen
-    	If CmpColorEx("657|152|FFFFFF,725|147|FFFFFF,676|217|FFFFFF,1076|585|FFFFFF", 0.9) = 1 Then 
+    	// If CmpColorEx("657|152|FFFFFF,725|147|FFFFFF,676|217|FFFFFF,1076|585|FFFFFF", 0.9) = 1 Then 
+    	If CmpColorEx("674|212|FFFFFF,717|215|FFFFFF,679|266|FFFFFF,799|284|FFFFFF",0.95) = 1 Then
     		Call Alert("CheckAndDoMissionAction", "进入钓鱼任务")
     		Call DelayMid()
     		
@@ -1965,12 +2148,34 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
     	Call DelayLong()
     	CheckAndDoMissionAction = True
     ElseIf IsBuyScreen() = True Then
+    	Dim quantity = ReadUIConfig("商会购买数量")
+    	Dim resultLength
+    	Dim idx = 1
+    	Dim num
+    	
     	Touch 580, 485, 100 // click on quantity box
     	Call DelayMin()
-    	Call BuyQtyPress(2) // click number 2
-    	Call DelayMin()
-    	Call BuyQtyPress(0) // click number 0
-    	Call DelayMin()
+    	
+    	resultLength = Len(CStr(quantity))
+		Call Alert("Buy Qty111", CStr(quantity))
+		Call DelayMin()
+		TracePrint resultLength
+		TracePrint num
+		
+		For resultLength
+			num = CInt(Mid(quantity, idx, 1))
+			Call BuyQtyPress(num)
+			idx = idx + 1
+			Delay 300
+		Next
+		Call DelayMin()
+    	
+    	//Call BuyQtyPress("yes") // click confirm
+    	
+    	//Call BuyQtyPress(2) // click number 2
+    	//Call DelayMin()
+    	//Call BuyQtyPress(0) // click number 0
+    	//Call DelayMin()
     	Call BuyQtyPress("yes") // click confirm
     	Call DelayMin()
     	Touch 600, 600, 100 // click buy
@@ -2120,8 +2325,8 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
     ElseIf IsPathFinding() = True or IsLoading() = True  Then
         Call Alert("CheckAndDoMissionAction", "寻路/加载 中")
         Call DelayMin()
-        Call Alert("CheckAndDoMissionAction", "点击任务框")
-        Touch touchMissionX, touchMissionY, 100
+        //Call Alert("CheckAndDoMissionAction", "点击任务框")
+        //Touch touchMissionX, touchMissionY, 100
         Call DelayLong()
         Call DelayLong()
         CheckAndDoMissionAction = True
@@ -2134,14 +2339,15 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
 End Function
 
 Function IsPathFinding
-    Dim p1 = GetPixelColor(590, 232)
-    Dim p2 = GetPixelColor(610, 232)
-    Dim p3 = GetPixelColor(601, 221)
-    Dim p4 = GetPixelColor(602, 242)
-    Dim p5 = GetPixelColor(1130,10)
+    //Dim p1 = GetPixelColor(590, 232)
+    //Dim p2 = GetPixelColor(610, 232)
+    //Dim p3 = GetPixelColor(601, 221)
+    //Dim p4 = GetPixelColor(602, 242)
+    //Dim p5 = GetPixelColor(1130,10)
 	
     // FFFEE9, FFFFEC, FFFFF4, FEFEF6
-    If (Left(CStr(p1), 1) = "F" and Left(CStr(p2), 1) = "F" and Left(CStr(p3), 1) = "F" and Left(CStr(p4), 1) = "F"  and Left(CStr(p5), 6) = "FFFFFF") Then 
+    //If (Left(CStr(p1), 1) = "F" and Left(CStr(p2), 1) = "F" and Left(CStr(p3), 1) = "F" and Left(CStr(p4), 1) = "F"  and Left(CStr(p5), 6) = "FFFFFF") Then 
+    If CmpColorEx("602|221|FFFFF7,600|242|FFFFF7,590|234|FFFFEE,610|231|FFFFF8",0.95) = 1 Then
     	Call Alert("IsPathFinding", "寻路中")
         IsPathFinding = True
     Else 
@@ -2511,7 +2717,7 @@ Function IsLoading
     //    IsLoading = False
     //End If
     
-    If CmpColorEx("33|663|F7E3C6,29|670|DE8C1C,39|668|E08C16", 0.9) = 1 Then
+    If CmpColorEx("33|663|F7E3C6,29|670|DE8C1C,39|668|E08B16", 0.9) = 1 Then
 		Call Alert("IsLoading", "加载中")
         IsLoading = True
 	Else
@@ -3501,10 +3707,22 @@ Test Ocr Start
 **************************************************************************/
 Sub ocrTest
     Dim ocrchar
-    ocrchar=Ocr(181,65,255,88,"969696-333333",0.8)
+    //ocrchar=Ocr(181,65,255,88,"969696-333333",0.8)
+    //Traceprint ocrchar
+    //Delay 1000
+    //Call ocrTest()
+    
+    TracePrint "check stamina"
+    TracePrint UseDict(1)
+    ocrchar = Ocr(159, 68, 283, 85, "FFFFFF-303030", 0.95)
     Traceprint ocrchar
-    Delay 1000
-    Call ocrTest()
+    Dim result = Split(ocrchar, "/")
+    TracePrint result(0)
+    TracePrint Len(result)
+    
+    While 1 = 1
+    	Delay 1000000
+    Wend
 End Sub
 /**************************************************************************
 Test Ocr End
