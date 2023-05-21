@@ -231,7 +231,7 @@ Sub Gardening
 		Touch 1055, 50, 200
 	End If
 
-	Call CheckStamina(20)
+	//Call CheckStamina(20)
 
     Rem a
     //Dim pointA = GetPixelColor(802, 280)
@@ -247,8 +247,8 @@ Sub Gardening
     	//If (pointA = color and pointB = color) Then 
     	If CmpColorEx("802|280|BEE3EF,805|288|C2E3EC",0.95) = 1 Then
         	Touch 802, 280, 100
-        Else 
-        	Call CheckStamina(20)
+        //Else 
+        //	Call CheckStamina(20)
     	End If
     	
 		
@@ -1160,8 +1160,10 @@ End Sub
 
 Sub RestartApp()
 	Dim PageLoadCount = 0
+	Dim FreezeCount = 0
 	Dim PageLoadPixelColor1, PageLoadPixelColor2
 	Rem action
+	Delay 30000
 	
 	If Not Sys.AppIsFront("com.play.rosea") or Not Sys.IsRunning("com.play.rosea") Then 
 		Dim BlackScreenCount = 0
@@ -1180,7 +1182,7 @@ Sub RestartApp()
 		RunApp "com.play.rosea"
 		Delay 2000
 		
-		//check is stuck at lock screen
+		//check is stuck at game start screen (black screen)
 		While CmpColorEx("100|100|000000,100|600|000000,1000|100|000000,1000|600|000000", 0.95) = 1
 			BlackScreenCount = BlackScreenCount + 1
 			Delay 1000
@@ -1198,8 +1200,20 @@ Sub RestartApp()
 			Delay 1000
 		Wend
 		
-		While CmpColorEx("25|589|FFFFFF,1212|10|FFFFFF,820|542|FFFFFF,1234|245|FFFFFF",0.90) <> 1		
-			//check is missed pirze notice
+		Delay 2000
+		
+		//25|589 sit button
+		//1212|10 change channel button
+		//820|542 auto attack button
+		//1234|245 right control switching button
+		While CmpColorEx("25|589|FFFFFF,1212|10|FFFFFF,820|542|FFFFFF,1234|245|FFFFFF", 0.90) <> 1
+			//check is Ragnarok Notice
+			While CmpColorEx("1172|76|FFFFFF,1191|77|FFFFFF,1175|98|FFFFFF,1192|98|FFFFFF", 0.9) = 1
+				Touch 1172, 76, 100
+				Delay 1000
+			Wend
+		
+			//check is missed prize notice
 			While CmpColorEx("733|432|FFFFFF,945|276|FFFFFF,349|188|FFFFFF,499|175|FFFFFF", 0.95) = 1
 				Touch 950, 288, 100
 				Delay 1000
@@ -1247,12 +1261,54 @@ Sub RestartApp()
 			End If
 		Else 
 			PageLoadCount = 0
+			
+			//check is freeze or not
+			If ReadUIConfig("游戏卡死自动重启选框") And Not ReadUIConfig("看板选框") And Not ReadUIConfig("萌王选框") And Not ReadUIConfig("商会选框") And Not ReadUIConfig("公会选框") And Not ReadUIConfig("钓鱼选框") And Not ReadUIConfig("园丁选框") Then 
+				//check is at default screen
+				If CmpColorEx("25|589|FFFFFF,1212|10|FFFFFF,1234|245|FFFFFF", 0.90) = 1 Then 
+					//top menu open close button is closed
+					If CmpColorEx("1057|53|FEFEFD,1059|53|FFFEF8", 0.95) = 1 Then 
+						While CmpColorEx("1057|53|FEFEFD,1059|53|FFFEF8", 0.95) = 1 And FreezeCount <= 5
+							//touch top menu open close button
+							Touch 1041, 35, 100
+							FreezeCount = FreezeCount + 1
+							Call DelayMin()
+						Wend
+						
+						If FreezeCount > 5 Then 
+							Call Alert("RestartApp", "游戏卡死，重启游戏")
+							KillApp "com.play.rosea"
+							Goto action
+						Else 
+							//touch again to close the top menu
+							Touch 1041, 35, 100
+							FreezeCount = 0
+						End If
+					//top menu open close button is opened
+					ElseIf CmpColorEx("1057|53|F5EDED,1059|53|FAFAF5",0.95) = 1 Then
+						While CmpColorEx("1057|53|F5EDED,1059|53|FAFAF5",0.95) = 1 And FreezeCount <= 5
+							//touch top menu open close button
+							Touch 1041, 35, 100
+							FreezeCount = FreezeCount + 1
+							Call DelayMin()
+						Wend
+						
+						If FreezeCount > 5 Then 
+							Call Alert("RestartApp", "游戏卡死，重启游戏")
+							KillApp "com.play.rosea"
+							Goto action
+						Else 
+							//touch again to close the top menu
+							//Touch 1041, 35, 100 // already closed, no need to close again
+							FreezeCount = 0
+						End If
+					End If
+				End If
+			End If
 		End If
-		
-		
 	End If
 	
-	Delay 10000
+	Delay 15000
 	Goto action
 End Sub
 
@@ -1480,11 +1536,11 @@ Sub DoMission(count, x, y)
     //Dim missionAvail_1 = CmpColorEx("69|212|F762D4,69|223|F362CE",0.8)
     //Dim missionAvail_2 = CmpColorEx("69|293|F762D4,69|304|F362CE",0.8)
     //Dim missionAvail_3 = CmpColorEx("69|311|F762D4,69|322|F362CE",0.8)
-    //Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
-    //Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
-    //Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
-    Dim touchMissionX// = x
-    Dim touchMissionY// = y
+    Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
+    Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
+    Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
+    Dim touchMissionX = x
+    Dim touchMissionY = y
     Dim skipMissionChk = ReadUIConfig("跳过任务检查")
     Dim missionBoxPosition = ReadUIConfig("任务框位置")
 	
@@ -1517,17 +1573,50 @@ Sub DoMission(count, x, y)
         	touchMissionX = 150
         	touchMissionY = 325
         End If
-    Else 
-    	FindColor 51, 191, 279, 450, "F462D4|F262D3|F562D4|E561CA", 0, 0.90, touchMissionX, touchMissionY
-    //ElseIf (missionAvail_1 = 1) Then
-    //    touchMissionX = 150
-    //    touchMissionY = 230
+    ElseIf (missionAvail_1 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 230
     //ElseIf (missionAvail_2 = 1) Then
     //    touchMissionX = 150
     //    touchMissionY = 310
     //ElseIf (missionAvail_3 = 1) Then
     //    touchMissionX = 150
     //    touchMissionY = 325
+    //Else 
+    //	FindColor 51, 191, 279, 450, "F462D4|F262D3|F562D4|E561CA", 0, 0.90, touchMissionX, touchMissionY
+    Else 
+    	Dim checkX = 69
+    	Dim checkY = 296
+    	Dim countXY = 0
+    	Dim checkString(4)
+    	checkString(0) = checkX
+    	checkString(1) = "|"
+    	checkString(3) = "|E55BC5"
+    	While touchMissionX = 0 And countXY <= 30
+    		checkString(2) = checkY + countXY
+    		TracePrint Join(checkString, "")
+    		
+    		If (CmpColorEx(Join(checkString, ""), 0.8) = 1) Then 
+    			touchMissionX = checkX
+    			touchMissionY = checkY + countXY
+    		Else 
+    			countXY = countXY + 1
+    		End If
+    	Wend
+    	
+    	checkY = 377
+    	checkString(3) = "|D857BB"
+    	While touchMissionX = 0 And countXY <= 30
+    		checkString(2) = checkY + countXY
+    		TracePrint Join(checkString, "")
+    		
+    		If (CmpColorEx(Join(checkString, ""), 0.8) = 1) Then 
+    			touchMissionX = checkX
+    			touchMissionY = checkY + countXY
+    		Else 
+    			countXY = countXY + 1
+    		End If
+    	Wend
     End If
     
     If (skipMissionChk = true) Then 
@@ -1727,26 +1816,26 @@ Sub DoMission2(count, x, y)
     //Dim missionAvail_1 = CmpColorEx("69|212|F762D4,69|223|F362CE",0.8)
     //Dim missionAvail_2 = CmpColorEx("69|293|F762D4,69|304|F362CE",0.8)
     //Dim missionAvail_3 = CmpColorEx("69|311|F762D4,69|322|F362CE",0.8)
-    //Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
-    //Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
-    //Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
-    Dim touchMissionX// = x
-    Dim touchMissionY// = y
+    Dim	missionAvail_1 = CmpColorEx("69|215|F260D1",0.8)
+    Dim	missionAvail_2 = CmpColorEx("69|296|E55BC5",0.8)
+    Dim	missionAvail_3 = CmpColorEx("69|377|D857BB",0.8)
+    Dim touchMissionX = x
+    Dim touchMissionY = y
 	
     // sometime main mission cannot be hidden, so have to check daily mission 
     // is at first slot or second slot
-    //If (missionAvail_1 = 1) Then
-    //    touchMissionX = 150
-    //    touchMissionY = 230
-    //ElseIf (missionAvail_2 = 1) Then
-    //    touchMissionX = 150
-    //    touchMissionY = 310
-    //ElseIf (missionAvail_3 = 1) Then
-    //    touchMissionX = 150
-    //    touchMissionY = 325
-    //End If
+    If (missionAvail_1 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 230
+    ElseIf (missionAvail_2 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 310
+    ElseIf (missionAvail_3 = 1) Then
+        touchMissionX = 150
+        touchMissionY = 325
+    End If
     
-    FindColor 51, 191, 279, 450, "F462D4|F262D3|F562D4|E561CA", 0, 0.90, touchMissionX, touchMissionY
+    //FindColor 51, 191, 279, 450, "F462D4|F262D3|F562D4|E561CA", 0, 0.90, touchMissionX, touchMissionY
     
     If (touchMissionX > 0) Then 
     	Call Alert("DoMissiont", "点击任务框")
@@ -1985,10 +2074,12 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
         	Touch 300, 70, 100
 			Call DelayMin()
 			Touch 300, 70, 100
+			//Call DelayMid()
+			//Call TakeMission2()
         End If
         
-        Call DelayLong()
-        
+        //Call DelayLong()
+        //Call TakeMission()
         Call SubmitMission()
         Call DelayMin()
         Call Alert("CheckAndDoMissionAction", "点击任务框")
@@ -2276,6 +2367,11 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
     	Touch 1243, 85, 100 // close mini map
     	Call DelayMin()
     	CheckAndDoMissionAction = True
+    ElseIf IsChatScreenOpened() = True Then
+    	Call Alert("CheckAndDoMissionAction", "关闭聊天窗")
+    	Touch 608, 356, 100 // close chat box
+    	Call DelayMin()
+    	CheckAndDoMissionAction = True
     ElseIf IsDead() = True Then
         Call Alert("CheckAndDoMissionAction", "死掉了")
         Call DelayMin()
@@ -2317,9 +2413,9 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
     		End If
     	End If
     	
-    	''Touch touchMissionX, touchMissionY, 100
-    	''Delay 500
-    	''Touch touchMissionX, touchMissionY, 100
+    	//Touch touchMissionX, touchMissionY, 100
+    	//Delay 500
+    	//Touch touchMissionX, touchMissionY, 100
     	// Call CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
         CheckAndDoMissionAction = True
     ElseIf IsPathFinding() = True or IsLoading() = True  Then
@@ -2331,7 +2427,8 @@ Function CheckAndDoMissionAction(board, touchMissionX, touchMissionY)
         Call DelayLong()
         CheckAndDoMissionAction = True
     Else 
-        //Call Alert("CheckAndDoMissionAction", "没检测到在进行任何动作，重试")
+        Call Alert("CheckAndDoMissionAction", "没检测到在进行任何动作，重试")
+        Call DelayMin()
         //Call Alert("CheckAndDoMissionAction", "点击任务框")
         //Touch touchMissionX, touchMissionY, 100
         CheckAndDoMissionAction = False
@@ -2957,6 +3054,14 @@ Function IsMiniMapOpened
 	End If
 End Function
 
+Function IsChatScreenOpened
+	If CmpColorEx("563|34|FFFFFF,564|38|FFFFFF,516|22|FFFFFF,608|356|E38F61",0.95) = 1 Then
+		IsChatScreenOpened = True
+	Else
+		IsChatScreenOpened = False
+	End If
+End Function
+
 Function IsNoteScreeen
 	If CmpColorEx("877|71|FFFFFF,898|28|C7BFFF,444|89|98A4AE,818|615|A6AAB2",0.9) = 1 Then
 		Call Alert("IsNoteScreeen", "笔记页面")
@@ -3202,7 +3307,7 @@ Sub DoInstancePirate()
 		BossCount = BossCount + 1
 		
 		If BossCount > 5 Then 
-			Swipe 200, 600, 200, 500, 500
+			Swipe 200, 600, 200, 500, 300
 		End If
 		
     	Goto action
@@ -3213,6 +3318,7 @@ End Sub
 
 Sub DoInstance()
 	Dim FubenTime = ReadUIConfig("副本次数")
+	Dim InstanceTypeId = CInt(ReadUIConfig("副本种类"))
     Dim FubenCount = 0
     Dim messageArray(3)
     messageArray(0) = "副本次数设为"
@@ -3258,12 +3364,14 @@ Sub DoInstance()
 		Touch 1150, 50, 100
 		Delay 200
 		
-		//TracePrint InstanceThread
-		//If (InstanceThread <> Null) Then
-		Thread.Stop (InstanceThread)
-		Call Alert("DoInstance", "暂停副本线程")
+		If InstanceTypeId <> 0 Then
 			//TracePrint InstanceThread
-		//End If
+			//If (InstanceThread <> Null) Then
+			Thread.Stop(InstanceThread)
+			Call Alert("DoInstance", "暂停副本线程")
+				//TracePrint InstanceThread
+			//End If
+		End If
 		
 		Delay 1500
 		
@@ -3512,15 +3620,15 @@ Function IsInsSkip()
 	//End If
 	
 	//x different 41
-	If CmpColorEx("1103|42|FFFFFF,1106|55|FFFFFF,1152|44|FFFFFF,1141|55|FFFFFF",0.95) = 1 Then //2
+	If CmpColorEx("989|40|FFFFFF,980|54|FFFFFF,1030|44|FFFFFF,1022|50|FFFFFF", 0.95) = 1 Then //5
 		IsInsSkip = True
-	ElseIf CmpColorEx("989|40|FFFFFF,980|54|FFFFFF,1030|44|FFFFFF,1022|50|FFFFFF", 0.95) = 1 Then //5
+	ElseIf CmpColorEx("1021|40|FFFFFF,1021|54|FFFFFF,1071|44|FFFFFF,1064|50|FFFFFF", 0.95) = 1 Then //4
 		IsInsSkip = True
-	ElseIf CmpColorEx("1030|40|FFFFFF,1021|54|FFFFFF,1071|44|FFFFFF,1063|50|FFFFFF", 0.95) = 1 Then //4
+	ElseIf CmpColorEx("1063|40|FFFFFF,1063|54|FFFFFF,1112|44|FFFFFF,1105|50|FFFFFF", 0.95) = 1 Then //3
 		IsInsSkip = True
-	ElseIf CmpColorEx("1071|40|FFFFFF,1062|54|FFFFFF,1112|44|FFFFFF,1104|50|FFFFFF", 0.95) = 1 Then //3
+	ElseIf CmpColorEx("1103|40|FFFFFF,1103|54|FFFFFF,1152|44|FFFFFF,1145|50|FFFFFF",0.95) = 1 Then //2 main
 		IsInsSkip = True
-	ElseIf CmpColorEx("1253|40|FFFFFF,1144|54|FFFFFF,1194|44|FFFFFF,1186|50|FFFFFF", 0.95) = 1 Then //1
+	ElseIf CmpColorEx("1144|40|FFFFFF,1144|54|FFFFFF,1193|44|FFFFFF,1186|50|FFFFFF", 0.95) = 1 Then //1
 		IsInsSkip = True
 	Else
 		IsInsSkip = False
